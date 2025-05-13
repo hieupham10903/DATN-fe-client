@@ -1,0 +1,316 @@
+@use "sass:color";
+
+// 🌍 Biến màu sắc chính (Tông nâu)
+$primary-color: #c18a60; // Màu nâu đất
+$secondary-color: #F5ECE3; // Màu nền be nhẹ (Nâu nhạt)
+$accent-color: #D32F2F; // Màu nhấn đỏ
+$text-color: #FFFFFF; // Chữ màu trắng
+$border-radius: 8px; // Độ bo góc
+$sub-menu-bg: #D3D3D3; // Màu nền xám nhạt cho menu con
+
+// 🌍 Reset cơ bản
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: $secondary-color;
+    color: $primary-color;
+}
+
+// 📌 Menu (Navigation)
+.ant-menu {
+    background-color: $primary-color !important; 
+    border-radius: 0 !important; 
+    margin: 0 !important; 
+    padding: 0 !important; 
+    box-shadow: none !important;
+
+    .ant-menu-horizontal {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .ant-menu-item {
+        transition: 0.3s ease-in-out;
+        border-radius: 0 !important;
+
+        a {
+            color: white !important;
+            font-weight: 500;
+        }
+
+        &:hover {
+            background-color: $accent-color !important;
+            transform: translateY(-2px);
+            transition: 0.3s ease-in-out;
+
+            a {
+                color: white !important;
+            }
+        }
+    }
+
+    // Mục đang được chọn
+    .ant-menu-item-selected {
+        background-color: $accent-color !important;
+        color: white !important;
+    }
+
+    // 📌 Menu con
+    .ant-menu-submenu {
+        background-color: $sub-menu-bg !important; // Màu nền xám nhạt cho menu con
+        border-radius: 4px;
+
+        .ant-menu-submenu-title {
+            color: $primary-color;
+            font-weight: 500;
+            padding-left: 24px;
+        }
+
+        .ant-menu-submenu-arrow {
+            color: $primary-color;
+        }
+
+        .ant-menu-item {
+            padding-left: 48px;
+        }
+
+        .ant-menu-item:hover {
+            background-color: lighten($primary-color, 40%);
+        }
+    }
+}
+
+// 📌 Nền của logo cùng màu với menu
+.logo-container {
+    background-color: $primary-color;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.logo-login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-container {
+    background-color: $primary-color;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+// 📌 Table (Cập nhật làm rõ header và border)
+.ant-table {
+    background-color: white;
+    border-radius: $border-radius;
+    border: 1px solid darken($primary-color, 20%); // Viền ngoài bảng rõ hơn
+
+    thead {
+        background-color: darken($primary-color, 10%);
+        border-bottom: 2px solid $primary-color; // Đường viền header rõ hơn
+
+        th {
+            font-weight: bold;
+            color: white; // Chữ trắng để tương phản
+            padding: 12px;
+            text-align: center;
+            border-right: 1px solid white;
+        }
+    }
+
+    tbody {
+        tr {
+            border-bottom: 1px solid darken($primary-color, 20%);
+            transition: 0.3s ease-in-out;
+
+            &:hover {
+                background-color: lighten($primary-color, 40%);
+            }
+
+            td {
+                padding: 12px;
+                border-right: 1px solid lighten($primary-color, 20%);
+                text-align: center;
+            }
+        }
+    }
+
+    // Làm rõ viền bảng
+    .ant-table-tbody > tr > td,
+    .ant-table-thead > tr > th {
+        border: 1px solid darken($primary-color, 20%);
+    }
+}
+
+// 📌 Biến màu sắc cho các nút
+$green-color: #4CAF50; // Màu xanh lá cây (Thêm mới)
+$blue-color: #2196F3; // Màu xanh nước biển (Chỉnh sửa)
+$red-color: #D32F2F; // Màu đỏ (Xóa)
+$yellow-color: #ffe600; // Màu vàng (Tìm kiếm)
+
+// 📌 Nút Thêm Mới (Green)
+button.new,
+.ant-btn.new {
+    background-color: $green-color !important;
+    color: $text-color !important;
+    
+    &:hover {
+        background-color: darken($green-color, 10%) !important;
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+// 📌 Nút Chỉnh Sửa (Blue)
+button.edit,
+.ant-btn.edit {
+    background-color: $blue-color !important;
+    color: $text-color !important;
+    
+    &:hover {
+        background-color: darken($blue-color, 10%) !important;
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+// 📌 Nút Xóa (Red)
+button.delete,
+.ant-btn.delete {
+    background-color: $red-color !important;
+    color: $text-color !important;
+    
+    &:hover {
+        background-color: darken($red-color, 10%) !important;
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+button.detail,
+.ant-btn.detail {
+    background-color: #FFA500 !important; // Màu cam
+    color: white !important;
+    
+    &:hover {
+        background-color: darken(#FFA500, 10%) !important;
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+// 📌 Nút Tìm Kiếm (Yellow)
+button.search,
+.ant-btn.search {
+    background-color: $yellow-color !important;
+    color: $primary-color !important;  // Đặt chữ màu nâu tối để tạo sự tương phản
+    
+    &:hover {
+        background-color: darken($yellow-color, 10%) !important;
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+// 📌 Các kiểu chung cho tất cả nút bấm
+button,
+.ant-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: $border-radius;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.3s ease-in-out;
+}
+
+/* CSS cho form */
+.form-container {
+    background-color: white;
+    border-radius: $border-radius;
+    padding: 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    margin: 50px auto;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: $primary-color;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.ant-form-item-label {
+    color: $primary-color;
+    font-weight: 500;
+}
+
+/* Đảm bảo Input và Select có chiều rộng ngang nhau */
+input.ant-input,
+select.ant-select {
+    width: 100%; /* Đảm bảo độ rộng 100% */
+    border-radius: $border-radius; /* Bo góc */
+    outline: none;
+    transition: 0.3s;
+}
+
+input.ant-input:focus,
+select.ant-select:focus {
+    border-color: $primary-color;
+    box-shadow: 0px 0px 5px rgba($primary-color, 0.5); /* Hiệu ứng khi focus */
+}
+
+.ant-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: $border-radius;
+    font-weight: 600;
+    background-color: $primary-color;
+    color: $text-color;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: darken($primary-color, 10%);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+/* Định dạng cho nút đăng ký */
+.ant-btn.register {
+    background-color: $green-color;
+    &:hover {
+        background-color: darken($green-color, 10%);
+    }
+}
+

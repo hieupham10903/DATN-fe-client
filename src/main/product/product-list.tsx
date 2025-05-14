@@ -1,30 +1,10 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  EyeOutlined,
-  PlusOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  Modal,
-  Row,
-  Select,
-  Table,
-  TableColumnsType,
-} from "antd";
-import React, { useEffect, useState } from "react";
+import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
+import { Card, Col, Pagination, Row } from "antd";
+import Meta from "antd/es/card/Meta";
+import { useEffect, useState } from "react";
 import { gender, role } from "../common/constant.ts";
-import {
-  DataSearchEmployee,
-  ObjectTypeEmployee,
-} from "../common/data-search.ts";
+import { ObjectTypeEmployee } from "../common/data-search.ts";
 import ProductHook from "./index.ts";
-import ProductCreate from "./product-create.tsx";
-import ProductDetail from "./product-detail.tsx";
 
 const ProductList = () => {
   const {
@@ -33,6 +13,8 @@ const ProductList = () => {
     totalProduct,
     updateSuccess,
     ResetProductState,
+    GetMainImage,
+    mainImage,
   } = ProductHook();
 
   const [pagination, setPagination] = useState({
@@ -44,15 +26,17 @@ const ProductList = () => {
 
   const [searchText, setSearchText] = useState("");
   const [searchField, setSearchField] = useState("name");
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState<{ value: string; label: string }[]>(
+    []
+  );
   const [isReset, setReset] = useState(false);
   const [record, setRecord] = useState(undefined);
   const [visibleCreate, setVisibleCreate] = useState(false);
   const [visibleDetail, setVisibleDetail] = useState(false);
   const [visibleUpdate, setVisibleUpdate] = useState(false);
+  const [mainImageList, setMainImageList] = useState<any>({});
 
-  const onChangePagination = (paginationChange) => {
-    const { current, pageSize } = paginationChange;
+  const onChangePagination = (current, pageSize) => {
     setPagination((prev) => ({
       ...prev,
       current,
@@ -132,185 +116,72 @@ const ProductList = () => {
     ResetProductState();
   };
 
-  const columns: TableColumnsType = [
-    {
-      title: "STT",
-      key: "index",
-      align: "center",
-      render(_, record, index) {
-        const indexRecord =
-          pagination.pageSize * (pagination.current - 1) + (index + 1);
-        return indexRecord;
-      },
-    },
-    {
-      title: "Mã sản phẩm",
-      dataIndex: "code",
-      key: "code",
-      align: "center",
-    },
-    {
-      title: "Tên sản phẩm",
-      dataIndex: "name",
-      key: "name",
-      align: "center",
-    },
-    {
-      title: "Giá",
-      dataIndex: "price",
-      key: "price",
-      align: "center",
-    },
-    {
-      title: "Tên danh mục",
-      dataIndex: "categoryId",
-      key: "categoryId",
-      align: "center",
-    },
-    {
-      title: "Tên kệ",
-      dataIndex: "shelfId",
-      key: "shelfId",
-      align: "center",
-    },
-    {
-      title: "Hành động",
-      key: "action",
-      align: "center",
-      render: (_, record) => (
-        <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
-          <Button
-            shape="circle"
-            icon={<EyeOutlined />}
-            className="ant-btn detail"
-            onClick={() => handleOpenDetail(record)}
-          />
-          <Button
-            shape="circle"
-            icon={<EditOutlined />}
-            className="ant-btn edit"
-            onClick={() => console.log("Chỉnh sửa:", record)}
-          />
-          <Button
-            shape="circle"
-            icon={<DeleteOutlined />}
-            className="ant-btn delete"
-            onClick={() => console.log("Xóa:", record)}
-          />
-        </div>
-      ),
-    },
-  ];
+  useEffect(() => {
+    listProduct.forEach((product: any) => {
+      if (product.imageUrl && !mainImageList[product.id]) {
+        GetMainImage(product.imageUrl).then((imageUrl) => {
+          setMainImageList((prev) => ({ ...prev, [product.id]: imageUrl }));
+        });
+      }
+    });
+  }, [listProduct, mainImageList]);
+
+  console.log("mainImageList", mainImageList);
 
   return (
     <>
-      <Modal
-        title="Thêm mới sản phẩm"
-        onCancel={handleCloseCreate}
-        width={1500}
-        visible={visibleCreate}
-        footer={null}
-      >
-        <ProductCreate handleCloseModal={handleCloseCreate} isReset={isReset} />
-      </Modal>
-
-      <Modal
-        title="Chi tiết sản phẩm"
-        onCancel={handleCloseDetail}
-        width={1500}
-        visible={visibleDetail}
-        footer={null}
-      >
-        <ProductDetail
-          productData={record}
-          handleCloseModal={handleCloseDetail}
-          isReset={isReset}
-        />
-      </Modal>
-
-      <div>
-        <h2>Danh sách sản phẩm</h2>
-
-        <Form layout="inline" style={{ marginBottom: 20 }}>
-          <Row
-            gutter={16}
-            style={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              marginBottom: 10,
-            }}
-          >
-            <Col>
-              <Form.Item>
-                <Select
-                  value={searchField}
-                  onChange={(value) => handleChangeSearch(value)}
-                  style={{ width: "150" }}
-                  options={DataSearchEmployee}
+      <Row gutter={[16, 16]}>
+        {listProduct.map((item: any) => (
+          <Col key={item.id} xs={24} sm={12} md={8} lg={6} xl={4}>
+            <Card
+              hoverable
+              cover={
+                <img
+                  alt={item.name}
+                  src={mainImageList[item.id]?.payload}
+                  style={{ height: 200, objectFit: "cover" }}
                 />
-              </Form.Item>
-            </Col>
-            <Col flex="auto">
-              <Form.Item>
-                {ObjectTypeEmployee[searchField] === "text" ? (
-                  <Input
-                    placeholder="Nhập từ khóa tìm kiếm"
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                  />
-                ) : (
-                  <Select
-                    value={searchText}
-                    onChange={(value) => setSearchText(value)}
-                    style={{ width: "100%" }}
-                    options={options}
-                  />
-                )}
-              </Form.Item>
-            </Col>
+              }
+              actions={[
+                <EyeOutlined
+                  key="detail"
+                  onClick={() => handleOpenDetail(item)}
+                />,
+                <EditOutlined
+                  key="edit"
+                  onClick={() => console.log("Chỉnh sửa:", item)}
+                />,
+                <DeleteOutlined
+                  key="delete"
+                  onClick={() => console.log("Xóa:", item)}
+                />,
+              ]}
+            >
+              <Meta
+                title={item.name}
+                description={`Giá: ${item.price.toLocaleString()}₫`}
+              />
+              <div style={{ marginTop: 8 }}>
+                <div>
+                  <strong>Mã:</strong> {item.code}
+                </div>
+                <div>
+                  <strong>Tồn kho:</strong> {item.stockQuantity}
+                </div>
+              </div>
+            </Card>
+          </Col>
+        ))}
+      </Row>
 
-            <Col>
-              <Button
-                className="ant-btn search"
-                icon={<SearchOutlined />}
-                onClick={handleSearch}
-                style={{ whiteSpace: "nowrap" }}
-              >
-                Tìm kiếm
-              </Button>
-            </Col>
-          </Row>
-
-          <Row
-            gutter={16}
-            style={{ width: "100%", display: "flex", alignItems: "center" }}
-          >
-            <Col>
-              <Button
-                type="primary"
-                className="ant-btn new"
-                icon={<PlusOutlined />}
-                onClick={handleOpenCreate}
-                style={{ whiteSpace: "nowrap" }}
-              >
-                Thêm mới
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-
-        <Table
-          columns={columns}
-          dataSource={listProduct}
-          rowKey="id"
-          pagination={{
-            current: pagination.current,
-            pageSize: pagination.pageSize,
-            showSizeChanger: true,
-            total: totalProduct,
-          }}
+      <div style={{ textAlign: "right", marginTop: 24 }}>
+        <Pagination
+          current={pagination.current}
+          pageSize={pagination.pageSize}
+          total={totalProduct}
           onChange={onChangePagination}
+          showSizeChanger
+          pageSizeOptions={["5", "10", "15"]}
         />
       </div>
     </>

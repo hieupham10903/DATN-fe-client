@@ -59,7 +59,7 @@ const ProductHook = () => {
   };
 
   const GetMainImage = (imagePath: string) => {
-    dispatch(getImage(imagePath));
+    return dispatch(getImage(imagePath));
   };
 
   const GetDetailImages = (paths: string[]) => {

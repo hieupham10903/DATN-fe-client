@@ -314,3 +314,12 @@ select.ant-select:focus {
     }
 }
 
+.header, .ant-layout-header {
+    background-color: $primary-color !important;
+    color: $text-color;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+}
+
+

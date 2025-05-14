@@ -1,6 +1,7 @@
 import {
-    MenuOutlined,
-    MessageOutlined
+    MessageOutlined,
+    SearchOutlined,
+    ShoppingCartOutlined
 } from "@ant-design/icons";
 import {
     Button,
@@ -12,7 +13,7 @@ import {
     Menu,
     Modal
 } from "antd";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import UserHook from "./main/login/index.ts";
 import avatar from './picture/avatar.png';
@@ -27,21 +28,9 @@ const MainLayout = ({ children }) => {
 
     const { Logout, ChatBotReply } = UserHook();
 
-    const handleLogoClick = () => {
-        navigate('/');
-    };
+    const handleLogoClick = () => navigate('/');
 
-    const handleTopMenuClick = (key) => {
-        setSelectedMenu(key);
-    };
-
-    const toggleSider = () => {
-        setCollapsed(!collapsed);
-    };
-
-    const handleLogout = () => {
-        Logout();
-    };
+    const handleLogout = () => Logout();
 
     const menu = (
         <Menu>
@@ -58,38 +47,30 @@ const MainLayout = ({ children }) => {
     const [chatInput, setChatInput] = useState("");
     const [chatMessages, setChatMessages] = useState([{ role: "assistant", content: "Xin chào, bạn cần trợ giúp gì?" }]);
 
-    const toggleChatModal = () => {
-        setChatVisible(!chatVisible);
-    };
+    const toggleChatModal = () => setChatVisible(!chatVisible);
 
     const handleSendMessage = () => {
         if (!chatInput.trim()) return;
-    
-        ChatBotReply({
-            message: chatInput
-        }).then((data) => {
+
+        ChatBotReply({ message: chatInput }).then((data) => {
             const botReply = data.payload.reply;
-    
+
             const newMessages = [
                 ...chatMessages,
                 { role: "user", content: chatInput },
                 { role: "assistant", content: "Đang xử lý..." },
             ];
             setChatMessages(newMessages);
-    
             setChatInput("");
-    
+
             setTimeout(() => {
                 setChatMessages((prev) => [
-                    ...prev.slice(0, -1), 
-                    { role: "assistant", content: botReply }, 
+                    ...prev.slice(0, -1),
+                    { role: "assistant", content: botReply },
                 ]);
             }, 800);
-        }).catch((error) => {
-            console.error("Error:", error);
-        });
+        }).catch((error) => console.error("Error:", error));
     };
-    
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
@@ -98,57 +79,25 @@ const MainLayout = ({ children }) => {
                     position: "fixed",
                     width: "100%",
                     zIndex: 1000,
-                    padding: 0,
+                    padding: "0 20px",
                     display: "flex",
-                    justifyContent: "space-between",
                     alignItems: "center",
                 }}
             >
-                <div
-                    className="logo-container"
-                    style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
-                    onClick={handleLogoClick}
-                >
-                    <img
-                        src={logo}
-                        alt="Logo"
-                        style={{ width: 80, height: 80 }}
+                <div onClick={handleLogoClick} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
+                    <img src={logo} alt="Logo" style={{ width: 80, height: 80 }} />
+                </div>
+
+                <div style={{ flex: 1, padding: "0 20px" }}>
+                    <Input
+                        prefix={<SearchOutlined />}
+                        placeholder="Tìm kiếm..."
+                        style={{ width: "100%", borderRadius: 8 }}
                     />
                 </div>
 
-                <Menu
-                    theme="dark"
-                    mode="horizontal"
-                    style={{
-                        margin: 0,
-                        padding: 0,
-                        flex: 1,
-                        justifyContent: "flex-start",
-                    }}
-                    className="custom-menu"
-                    selectedKeys={[selectedMenu]}
-                >
-                    <Menu.Item key="toggle-menu" onClick={toggleSider}>
-                        <MenuOutlined style={{ fontSize: "18px", color: "#fff" }} />
-                    </Menu.Item>
-                    <Menu.Item key="home" onClick={() => handleTopMenuClick("home")}>
-                        <Link to="/">Trang chủ</Link>
-                    </Menu.Item>
-                    <Menu.Item key="employees" onClick={() => handleTopMenuClick("employees")}>
-                        <Link to="/employee-list">Danh sách nhân viên</Link>
-                    </Menu.Item>
-                    <Menu.Item key="products" onClick={() => handleTopMenuClick("products")}>
-                        <Link to="/product-list">Danh sách sản phẩm</Link>
-                    </Menu.Item>
-                    <Menu.Item key="about" onClick={() => handleTopMenuClick("about")}>
-                        <Link to="/about">Giới thiệu</Link>
-                    </Menu.Item>
-                </Menu>
-
-                <div
-                    className="avatar-container"
-                    style={{ display: "flex", alignItems: "center", cursor: "pointer", paddingRight: "10px" }}
-                >
+                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                    <ShoppingCartOutlined style={{ fontSize: 24, color: "#fff", cursor: "pointer" }} />
                     <Dropdown overlay={menu} trigger={['hover']}>
                         <div
                             style={{
@@ -159,18 +108,11 @@ const MainLayout = ({ children }) => {
                                 overflow: "hidden",
                                 display: "flex",
                                 alignItems: "center",
-                                justifyContent: "center"
+                                justifyContent: "center",
+                                cursor: "pointer"
                             }}
                         >
-                            <img
-                                src={avatar}
-                                alt="Avatar"
-                                style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                }}
-                            />
+                            <img src={avatar} alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         </div>
                     </Dropdown>
                 </div>
@@ -180,50 +122,26 @@ const MainLayout = ({ children }) => {
                 <Sider
                     width={200}
                     collapsed={collapsed}
-                    onCollapse={(collapsed) => setCollapsed(collapsed)}
-                    style={{ background: "#fff" }}
+                    onCollapse={setCollapsed}
                 >
                     <Menu
                         mode="inline"
                         selectedKeys={[selectedMenu]}
-                        style={{
-                            height: "100%",
-                            borderRight: 0,
-                            paddingTop: 20,
-                        }}
+                        onClick={({ key }) => setSelectedMenu(key)}
+                        style={{ height: "100%", paddingTop: 20 }}
                     >
-                        {selectedMenu === "home" && (
-                            <>
-                                <Menu.Item key="home-1">
-                                    <Link to="/home/feature-1">Feature 1</Link>
-                                </Menu.Item>
-                                <Menu.Item key="home-2">
-                                    <Link to="/home/feature-2">Feature 2</Link>
-                                </Menu.Item>
-                            </>
-                        )}
-
-                        {selectedMenu === "employees" && (
-                            <>
-                                <Menu.Item key="employees-1">
-                                    <Link to="/employee-list/department-1">Department 1</Link>
-                                </Menu.Item>
-                                <Menu.Item key="employees-2">
-                                    <Link to="/employee-list/department-2">Department 2</Link>
-                                </Menu.Item>
-                            </>
-                        )}
-
-                        {selectedMenu === "about" && (
-                            <>
-                                <Menu.Item key="about-1">
-                                    <Link to="/about/team">Our Team</Link>
-                                </Menu.Item>
-                                <Menu.Item key="about-2">
-                                    <Link to="/about/history">History</Link>
-                                </Menu.Item>
-                            </>
-                        )}
+                        <Menu.Item key="home">
+                            <Link to="/">Trang chủ</Link>
+                        </Menu.Item>
+                                                <Menu.Item key="about">
+                            <Link to="/about">Giới thiệu</Link>
+                        </Menu.Item>
+                        <Menu.Item key="employees">
+                            <Link to="/employee-list">Danh sách nhân viên</Link>
+                        </Menu.Item>
+                        <Menu.Item key="products">
+                            <Link to="/product-list">Danh sách sản phẩm</Link>
+                        </Menu.Item>
                     </Menu>
                 </Sider>
 
@@ -239,86 +157,84 @@ const MainLayout = ({ children }) => {
                 onClick={toggleChatModal}
             />
 
-        <Modal
-            open={chatVisible}
-            onCancel={toggleChatModal}
-            footer={null}
-            width={350}
-            closable
-            mask={false}
-            style={{
-                position: "fixed",
-                bottom: 100,
-                right: 30,
-                top: "auto",
-                margin: 0,
-                padding: 0,
-                transform: "none",
-                boxShadow: "0 0 10px rgba(0,0,0,0.2)",
-                borderRadius: 12,
-                overflow: "hidden"
-            }}
-            bodyStyle={{
-                maxHeight: 400,
-                overflowY: "auto",
-                position: "relative",
-            }}
-            title="Trợ lý ảo"
-        >
-            <List
-                dataSource={chatMessages}
-                renderItem={(item, index) => (
-                    <List.Item
-                        key={index}
-                        style={{
-                            justifyContent: item.role === "user" ? "flex-end" : "flex-start",
-                        }}
-                    >
-                        <div
+            <Modal
+                open={chatVisible}
+                onCancel={toggleChatModal}
+                footer={null}
+                width={350}
+                closable
+                mask={false}
+                style={{
+                    position: "fixed",
+                    bottom: 100,
+                    right: 30,
+                    top: "auto",
+                    margin: 0,
+                    padding: 0,
+                    transform: "none",
+                    boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+                    borderRadius: 12,
+                    overflow: "hidden"
+                }}
+                bodyStyle={{
+                    maxHeight: 400,
+                    overflowY: "auto",
+                    position: "relative",
+                }}
+                title="Trợ lý ảo"
+            >
+                <List
+                    dataSource={chatMessages}
+                    renderItem={(item, index) => (
+                        <List.Item
+                            key={index}
                             style={{
-                                background: item.role === "user" ? "#1890ff" : "#f0f0f0",
-                                color: item.role === "user" ? "#fff" : "#000",
-                                padding: "8px 12px",
-                                borderRadius: 16,
-                                maxWidth: "80%",
+                                justifyContent: item.role === "user" ? "flex-end" : "flex-start",
                             }}
                         >
-                            {item.content}
-                        </div>
-                    </List.Item>
-                )}
-            />
+                            <div
+                                style={{
+                                    padding: "8px 12px",
+                                    borderRadius: 16,
+                                    maxWidth: "80%",
+                                }}
+                            >
 
-            <div style={{
-                position: "sticky", 
-                bottom: 0, 
-                width: "100%", 
-                backgroundColor: "white", 
-                padding: "10px",
-                zIndex: 1,
-            }}>
-                <Input.TextArea
-                    rows={2}
-                    placeholder="Nhập tin nhắn..."
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    onPressEnter={(e) => {
-                        if (!e.shiftKey) {
-                            e.preventDefault();
-                            handleSendMessage();
-                        }
-                    }}
+                                {item.content}
+                            </div>
+                        </List.Item>
+                    )}
                 />
-                <Button
-                    type="primary"
-                    style={{ marginTop: 8, width: "100%" }}
-                    onClick={handleSendMessage}
-                >
-                    Gửi
-                </Button>
-            </div>
-        </Modal>
 
+                <div style={{
+                    position: "sticky",
+                    bottom: 0,
+                    width: "100%",
+                    backgroundColor: "white",
+                    padding: "10px",
+                    zIndex: 1,
+                }}>
+                    <Input.TextArea
+                        rows={2}
+                        placeholder="Nhập tin nhắn..."
+                        value={chatInput}
+                        onChange={(e) => setChatInput(e.target.value)}
+                        onPressEnter={(e) => {
+                            if (!e.shiftKey) {
+                                e.preventDefault();
+                                handleSendMessage();
+                            }
+                        }}
+                    />
+                    <Button
+                        type="primary"
+                        style={{ marginTop: 8, width: "100%" }}
+                        onClick={handleSendMessage}
+                    >
+                        Gửi
+                    </Button>
+                </div>
+            </Modal>
         </Layout>
     );
 };

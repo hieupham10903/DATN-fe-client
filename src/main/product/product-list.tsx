@@ -1,9 +1,9 @@
 import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
-import { Card, Col, Pagination, Row } from "antd";
+import { Pagination } from "antd";
+import Card from "antd/es/card/Card";
 import Meta from "antd/es/card/Meta";
 import { useEffect, useState } from "react";
-import { gender, role } from "../common/constant.ts";
-import { ObjectTypeEmployee } from "../common/data-search.ts";
+import { useNavigate } from "react-router-dom";
 import ProductHook from "./index.ts";
 
 const ProductList = () => {
@@ -17,6 +17,8 @@ const ProductList = () => {
     mainImage,
   } = ProductHook();
 
+  const navigate = useNavigate();
+
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -26,15 +28,10 @@ const ProductList = () => {
 
   const [searchText, setSearchText] = useState("");
   const [searchField, setSearchField] = useState("name");
-  const [options, setOptions] = useState<{ value: string; label: string }[]>(
-    []
-  );
   const [isReset, setReset] = useState(false);
   const [record, setRecord] = useState(undefined);
-  const [visibleCreate, setVisibleCreate] = useState(false);
   const [visibleDetail, setVisibleDetail] = useState(false);
-  const [visibleUpdate, setVisibleUpdate] = useState(false);
-  const [mainImageList, setMainImageList] = useState<any>({});
+  const [mainImageList, setMainImageList] = useState({});
 
   const onChangePagination = (current, pageSize) => {
     setPagination((prev) => ({
@@ -52,62 +49,8 @@ const ProductList = () => {
     updateSuccess && GetDataSearch(pagination);
   }, [updateSuccess]);
 
-  useEffect(() => {
-    if (ObjectTypeEmployee[searchField] === "select") {
-      if (searchField === "gender") {
-        setOptions(
-          Object.keys(gender).map((key) => ({
-            value: key,
-            label: gender[key],
-          }))
-        );
-      } else if (searchField === "role") {
-        setOptions(
-          Object.keys(role).map((key) => ({
-            value: key,
-            label: role[key],
-          }))
-        );
-      }
-    } else {
-      setOptions([]);
-    }
-  }, [searchField]);
-
-  const handleChangeSearch = (value) => {
-    setSearchField(value);
-    setSearchText("");
-  };
-
-  const handleSearch = () => {
-    const searchCriteria = {
-      [searchField]: {
-        [ObjectTypeEmployee[searchField] === "text" ? "contains" : "equals"]:
-          searchText,
-      },
-    };
-
-    setPagination((prev) => ({
-      ...prev,
-      current: 1,
-      dataSearch: searchCriteria,
-    }));
-  };
-
-  const handleOpenCreate = () => {
-    setVisibleCreate(true);
-    setReset(!isReset);
-  };
-
-  const handleCloseCreate = () => {
-    setVisibleCreate(false);
-    setReset(!isReset);
-  };
-
-  const handleOpenDetail = (record) => {
-    setVisibleDetail(true);
-    setReset(!isReset);
-    setRecord(record);
+  const handleOpenDetail = (item) => {
+    navigate(`/product/${item.id}`);
   };
 
   const handleCloseDetail = () => {
@@ -126,13 +69,23 @@ const ProductList = () => {
     });
   }, [listProduct, mainImageList]);
 
-  console.log("mainImageList", mainImageList);
-
   return (
     <>
-      <Row gutter={[16, 16]}>
-        {listProduct.map((item: any) => (
-          <Col key={item.id} xs={24} sm={12} md={8} lg={6} xl={4}>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 16,
+        }}
+      >
+        {listProduct.slice(0, 10).map((item: any) => (
+          <div
+            key={item.id}
+            style={{
+              width: "calc(20% - 13px)",
+              minWidth: 220,
+            }}
+          >
             <Card
               hoverable
               cover={
@@ -170,9 +123,9 @@ const ProductList = () => {
                 </div>
               </div>
             </Card>
-          </Col>
+          </div>
         ))}
-      </Row>
+      </div>
 
       <div style={{ textAlign: "right", marginTop: 24 }}>
         <Pagination

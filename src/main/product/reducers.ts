@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import axiosClient from "../common/axiosClient.ts";
 
 const initialState = {
   listProduct: [],
   totalProduct: 0,
-  product: undefined,
+  product: undefined as any,
   imageUploadUrl: null as any,
   error: null,
   updateSuccess: false,
@@ -14,20 +14,31 @@ const initialState = {
 
 const apiSearchProduct = "/api/search-product";
 const apiCreateProduct = "/api/create-product";
+const apiDetailProduct = "/api/get-product-by-id";
 
 export const searchProduct = createAsyncThunk(
-  "product/searchEmployee",
+  "product/searchProduct",
   async ({ query, bodyRep }: any) => {
     const requestUrl = `${apiSearchProduct}?${query}`;
-    const response = await axios.post<any>(requestUrl, bodyRep);
+    const response = await axiosClient.post<any>(requestUrl, bodyRep);
     return response;
   }
 );
 
 export const createProduct = createAsyncThunk(
-  "product/createEmployee",
+  "product/createProduct",
   async (body: any) => {
-    const response = await axios.post<any>(apiCreateProduct, body);
+    const response = await axiosClient.post<any>(apiCreateProduct, body);
+    return response;
+  }
+);
+
+export const detailProduct = createAsyncThunk(
+  "product/detailProduct",
+  async (id: string) => {
+    const response = await axiosClient.post<any>(
+      `${apiDetailProduct}?id=${id}`
+    );
     return response;
   }
 );
@@ -35,7 +46,7 @@ export const createProduct = createAsyncThunk(
 export const uploadImage = createAsyncThunk(
   "product/uploadImage",
   async (formData: FormData) => {
-    const response = await axios.post("/api/upload", formData, {
+    const response = await axiosClient.post("/api/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return response.data;
@@ -45,9 +56,12 @@ export const uploadImage = createAsyncThunk(
 export const getImage = createAsyncThunk(
   "product/getImage",
   async (imagePath: string) => {
-    const response = await axios.get(`/api/get-image?imagePath=${imagePath}`, {
-      responseType: "blob",
-    });
+    const response = await axiosClient.get(
+      `/api/get-image?imagePath=${imagePath}`,
+      {
+        responseType: "blob",
+      }
+    );
 
     return new Promise<string>((resolve) => {
       const reader = new FileReader();
@@ -61,7 +75,7 @@ export const getMultipleImages = createAsyncThunk(
   "product/getMultipleImages",
   async (imagePaths: string[]) => {
     const promises = imagePaths.map((path) =>
-      axios
+      axiosClient
         .get(`/api/get-image?imagePath=${path}`, {
           responseType: "blob",
         })
@@ -114,6 +128,9 @@ const productReducer = createSlice({
       })
       .addCase(getMultipleImages.fulfilled, (state, action) => {
         state.detailImages = action.payload;
+      })
+      .addCase(detailProduct.fulfilled, (state, action) => {
+        state.product = action.payload.data;
       });
   },
 });

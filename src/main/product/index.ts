@@ -3,6 +3,7 @@ import { AppDispatch, RootState } from "../../main/reducers";
 import { PaginationStateWithQuery } from "../common/common.ts";
 import {
   createProduct,
+  detailProduct,
   getImage,
   getMultipleImages,
   resetState,
@@ -31,6 +32,8 @@ const ProductHook = () => {
   const detailImages = useSelector(
     (state: RootState) => state.product.detailImages
   );
+
+  const product = useSelector((state: RootState) => state.product.product);
 
   const GetDataSearch = (paginationState) => {
     const handlePaginationState = {
@@ -70,6 +73,10 @@ const ProductHook = () => {
     dispatch(resetState());
   };
 
+  const DetailProduct = (id: string) => {
+    dispatch(detailProduct(id));
+  };
+
   return {
     GetDataSearch,
     listProduct,
@@ -83,6 +90,8 @@ const ProductHook = () => {
     mainImage,
     detailImages,
     ResetProductState,
+    DetailProduct,
+    product,
   };
 };
 export default ProductHook;

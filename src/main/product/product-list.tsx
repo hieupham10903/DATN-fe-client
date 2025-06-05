@@ -1,4 +1,8 @@
-import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
+import {
+  DollarOutlined,
+  EyeOutlined,
+  ShoppingCartOutlined,
+} from "@ant-design/icons";
 import { Pagination } from "antd";
 import Card from "antd/es/card/Card";
 import Meta from "antd/es/card/Meta";
@@ -76,6 +80,7 @@ const ProductList = () => {
           display: "flex",
           flexWrap: "wrap",
           gap: 16,
+          justifyContent: "center",
         }}
       >
         {listProduct.slice(0, 10).map((item: any) => (
@@ -92,29 +97,44 @@ const ProductList = () => {
                 <img
                   alt={item.name}
                   src={mainImageList[item.id]?.payload}
-                  style={{ height: 200, objectFit: "cover" }}
+                  style={{ height: 300, objectFit: "cover" }}
                 />
               }
               actions={[
                 <EyeOutlined
                   key="detail"
                   onClick={() => handleOpenDetail(item)}
+                  style={{ fontSize: 24, padding: 8 }}
                 />,
-                <EditOutlined
-                  key="edit"
+                <ShoppingCartOutlined
+                  key="order"
                   onClick={() => console.log("Chỉnh sửa:", item)}
+                  style={{ fontSize: 24, padding: 8 }}
                 />,
-                <DeleteOutlined
-                  key="delete"
+                <DollarOutlined
+                  key="buy"
                   onClick={() => console.log("Xóa:", item)}
+                  style={{ fontSize: 24, padding: 8 }}
                 />,
               ]}
             >
               <Meta
-                title={item.name}
-                description={`Giá: ${item.price.toLocaleString()}₫`}
+                title={<div style={{ textAlign: "center" }}>{item.name}</div>}
+                description={
+                  <div style={{ textAlign: "center" }}>
+                    Giá: {item.price.toLocaleString()}₫
+                  </div>
+                }
               />
-              <div style={{ marginTop: 8 }}>
+              <div
+                style={{
+                  marginTop: 8,
+                  textAlign: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
                 <div>
                   <strong>Mã:</strong> {item.code}
                 </div>

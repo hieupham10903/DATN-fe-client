@@ -57,12 +57,6 @@ const ProductList = () => {
     navigate(`/product/${item.id}`);
   };
 
-  const handleCloseDetail = () => {
-    setVisibleDetail(false);
-    setReset(!isReset);
-    ResetProductState();
-  };
-
   useEffect(() => {
     listProduct.forEach((product: any) => {
       if (product.imageUrl && !mainImageList[product.id]) {

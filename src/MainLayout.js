@@ -4,28 +4,31 @@ import {
     ShoppingCartOutlined
 } from "@ant-design/icons";
 import {
+    Breadcrumb,
     Button,
+    Col,
     Dropdown,
     FloatButton,
     Input,
     Layout,
     List,
     Menu,
-    Modal
+    Modal,
+    Row
 } from "antd";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import UserHook from "./main/login/index.ts";
 import avatar from './picture/avatar.png';
 import logo from './picture/logo.png';
 
-const { Header, Content, Sider } = Layout;
+const { Header, Content, Sider, Footer } = Layout;
 
 const MainLayout = ({ children }) => {
     const navigate = useNavigate();
     const [selectedMenu, setSelectedMenu] = useState("home");
     const [collapsed, setCollapsed] = useState(false);
-
+    const location = useLocation();
     const { Logout, ChatBotReply } = UserHook();
 
     const handleLogoClick = () => navigate('/');
@@ -70,6 +73,55 @@ const MainLayout = ({ children }) => {
                 ]);
             }, 800);
         }).catch((error) => console.error("Error:", error));
+    };
+
+    const pathNameMap = {
+        "about": "Giới thiệu",
+        "product-list": "Danh sách sản phẩm",
+        "product": "Chi tiết sản phẩm",
+        "profile": "Sửa thông tin",
+    };
+
+    const generateBreadcrumb = () => {
+        const pathSnippets = location.pathname.split('/').filter(i => i);
+        const breadcrumbItems = [
+            <Breadcrumb.Item key="home">
+                <Link to="/">Trang chủ</Link>
+            </Breadcrumb.Item>,
+        ];
+
+        if (pathSnippets.length === 2 && pathSnippets[0] === "product") {
+            breadcrumbItems.push(
+                <Breadcrumb.Item key="product-list">
+                    <Link to="/product-list">Danh sách sản phẩm</Link>
+                </Breadcrumb.Item>
+            );
+            breadcrumbItems.push(
+                <Breadcrumb.Item key="product-detail">
+                    Chi tiết sản phẩm
+                </Breadcrumb.Item>
+            );
+            return breadcrumbItems;
+        }
+
+        // Với các trang khác dùng cách cũ
+        const pathNameMap = {
+            "about": "Giới thiệu",
+            "product-list": "Danh sách sản phẩm",
+            "profile": "Sửa thông tin",
+        };
+
+        pathSnippets.forEach((snippet, index) => {
+            const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
+            const name = pathNameMap[snippet] || decodeURIComponent(snippet);
+            breadcrumbItems.push(
+                <Breadcrumb.Item key={url}>
+                    <Link to={url}>{name}</Link>
+                </Breadcrumb.Item>
+            );
+        });
+
+        return breadcrumbItems;
     };
 
     return (
@@ -133,7 +185,7 @@ const MainLayout = ({ children }) => {
                         <Menu.Item key="home">
                             <Link to="/">Trang chủ</Link>
                         </Menu.Item>
-                                                <Menu.Item key="about">
+                        <Menu.Item key="about">
                             <Link to="/about">Giới thiệu</Link>
                         </Menu.Item>
                         <Menu.Item key="products">
@@ -143,6 +195,9 @@ const MainLayout = ({ children }) => {
                 </Sider>
 
                 <Content style={{ padding: "20px", minHeight: "calc(100vh - 64px)" }}>
+                    <Breadcrumb style={{ marginBottom: 16 }}>
+                        {generateBreadcrumb()}
+                    </Breadcrumb>
                     {children}
                 </Content>
             </Layout>
@@ -232,6 +287,67 @@ const MainLayout = ({ children }) => {
                     </Button>
                 </div>
             </Modal>
+            <Footer style={{ background: "#c18a60", color: "#f5f0e6", padding: "40px 60px" }}>
+                <Row gutter={[24, 24]}>
+                    {/* Cột 1: Thông tin doanh nghiệp */}
+                    <Col xs={24} md={8}>
+                    <h3 style={{ color: "#ffffff" }}>Thông tin doanh nghiệp</h3>
+                    <img src="logo_ak.png" alt="Logo AK" style={{ height: 50, margin: "10px 0" }} />
+                    <p><strong>Công Ty TNHH General AK</strong></p>
+                    <p>Mã số thuế: 0316936902</p>
+                    <p>VP: 96/17 Đường 18B, P. Bình Hưng Hòa A, Q. Bình Tân, Tp HCM</p>
+                    <p>XSX: Đường DT633 Cát Minh Phù Cát, Bình Định</p>
+                    <p>Điện thoại: 0935 360 738</p>
+                    <p>Mail: <a href="mailto:akhandmade.info@gmail.com" style={{ color: "#ffe7c4" }}>akhandmade.info@gmail.com</a></p>
+                    </Col>
+
+                    {/* Cột 2: Các nhóm thông tin */}
+                    <Col xs={24} md={16}>
+                    <Row gutter={[16, 16]}>
+                        <Col xs={12} sm={8}>
+                        <h4 style={{ color: "#ffffff" }}>Giới thiệu</h4>
+                        <ul style={{ padding: 0, listStyle: "none" }}>
+                            {["Về HandmadeAk", "Liên hệ", "Tuyển dụng"].map(item => (
+                            <li key={item}><a href="#" style={{ color: "#ffe7c4", textDecoration: "none" }}>{item}</a></li>
+                            ))}
+                        </ul>
+                        <h4 style={{ color: "#ffffff", marginTop: 16 }}>Giờ làm việc</h4>
+                        <p style={{ margin: 0, color: "#f5f0e6" }}>
+                            Thứ 2 - Thứ 7: 8:00 - 17:00
+                        </p>
+                        </Col>
+
+                        <Col xs={12} sm={8}>
+                        <h4 style={{ color: "#ffffff" }}>Sản phẩm</h4>
+                        <ul style={{ padding: 0, listStyle: "none" }}>
+                            {["Nhóm tre", "Nhóm cói", "Nhóm lá buông", "Nhóm lục bình", "Nhóm mây tre"].map(item => (
+                            <li key={item}><a href="#" style={{ color: "#ffe7c4", textDecoration: "none" }}>{item}</a></li>
+                            ))}
+                        </ul>
+
+                        <h4 style={{ color: "#ffffff", marginTop: 16 }}>Bài viết nổi bật</h4>
+                        </Col>
+
+                        <Col xs={12} sm={8}>
+                        <h4 style={{ color: "#ffffff" }}>Chính sách</h4>
+                        <ul style={{ padding: 0, listStyle: "none" }}>
+                            {[
+                            "Chính sách bảo mật", "Chính sách vận chuyển",
+                            "Chính sách đổi trả", "Chính sách bảo hành", "Chính sách thanh toán"
+                            ].map(item => (
+                            <li key={item}><a href="#" style={{ color: "#ffe7c4", textDecoration: "none" }}>{item}</a></li>
+                            ))}
+                        </ul>
+
+                        <h4 style={{ color: "#ffffff", marginTop: 16 }}>Đăng ký email</h4>
+                        <p style={{ color: "#f5f0e6" }}>
+                            Nhận khuyến mãi, voucher và các bài viết hay về nội thất hàng tháng.
+                        </p>
+                        </Col>
+                    </Row>
+                    </Col>
+                </Row>
+            </Footer>
         </Layout>
     );
 };

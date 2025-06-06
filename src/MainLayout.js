@@ -136,9 +136,6 @@ const MainLayout = ({ children }) => {
                                                 <Menu.Item key="about">
                             <Link to="/about">Giới thiệu</Link>
                         </Menu.Item>
-                        <Menu.Item key="employees">
-                            <Link to="/employee-list">Danh sách nhân viên</Link>
-                        </Menu.Item>
                         <Menu.Item key="products">
                             <Link to="/product-list">Danh sách sản phẩm</Link>
                         </Menu.Item>

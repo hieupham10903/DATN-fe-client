@@ -75,13 +75,6 @@ const MainLayout = ({ children }) => {
         }).catch((error) => console.error("Error:", error));
     };
 
-    const pathNameMap = {
-        "about": "Giới thiệu",
-        "product-list": "Danh sách sản phẩm",
-        "product": "Chi tiết sản phẩm",
-        "profile": "Sửa thông tin",
-    };
-
     const generateBreadcrumb = () => {
         const pathSnippets = location.pathname.split('/').filter(i => i);
         const breadcrumbItems = [
@@ -149,7 +142,10 @@ const MainLayout = ({ children }) => {
                 </div>
 
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                    <ShoppingCartOutlined style={{ fontSize: 24, color: "#fff", cursor: "pointer" }} />
+                    <ShoppingCartOutlined
+                        style={{ fontSize: 24, color: "#fff", cursor: "pointer" }}
+                        onClick={() => navigate("/order-list")}
+                    />
                     <Dropdown overlay={menu} trigger={['hover']}>
                         <div
                             style={{

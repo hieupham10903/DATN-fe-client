@@ -3,6 +3,7 @@ import { Navigate, Outlet, Route, BrowserRouter as Router, Routes } from "react-
 import HomePage from "./main/home/homepage.tsx";
 import UserHook from "./main/login/index.ts";
 import Login from "./main/login/login-form.tsx";
+import OrderList from "./main/order/order-list.tsx";
 import ProductDetail from "./main/product/product-detail.tsx";
 import ProductList from "./main/product/product-list.tsx";
 import { store } from "./main/reducers.ts";
@@ -10,12 +11,13 @@ import MainLayout from "./MainLayout.js";
 import "./styles.scss";
 
 const App = () => {
-  const { isAuthenticated } = UserHook();
+  const { isAuthenticated, userInfo } = UserHook();
 
   const ProtectedRoute = ({ children }) => {
     if (!isAuthenticated) {
       return <Navigate to="/login" replace />;
     }
+    console.log("userInfo", userInfo)
     return children;
   };
 
@@ -41,6 +43,7 @@ const App = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/product-list" element={<ProductList />} />
             <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/order-list" element={<OrderList />} />
           </Route>
 
           <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} />} />

@@ -1,5 +1,6 @@
 import { Provider } from "react-redux";
 import { Navigate, Outlet, Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
 import HomePage from "./main/home/homepage.tsx";
 import UserHook from "./main/login/index.ts";
 import Login from "./main/login/login-form.tsx";
@@ -14,10 +15,9 @@ const App = () => {
   const { isAuthenticated, userInfo } = UserHook();
 
   const ProtectedRoute = ({ children }) => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !userInfo) {
       return <Navigate to="/login" replace />;
     }
-    console.log("userInfo", userInfo)
     return children;
   };
 
@@ -30,6 +30,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <Router>
+        <ToastContainer />
         <Routes>
           <Route path="/login" element={<Login />} />
 

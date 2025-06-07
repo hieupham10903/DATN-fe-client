@@ -4,6 +4,7 @@ import { GiftOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import DeleteOutlined from "@ant-design/icons/lib/icons/DeleteOutlined";
 import { Button, Card, InputNumber, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import OrderHook from "./index.ts";
 
 const { Title } = Typography;
@@ -21,11 +22,12 @@ const OrderList = () => {
   const [mainImageList, setMainImageList] = useState({});
   const [totalPrice, setTotalPrice] = useState(0);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (userInfo) {
       GetListOrder(userInfo?.id);
     }
-    console.log("userInfo", userInfo);
   }, [userInfo, updateSuccess]);
 
   useEffect(() => {
@@ -48,6 +50,10 @@ const OrderList = () => {
       id: record.id,
       quantity: value,
     });
+  };
+
+  const handleRemoveItem = (record: any) => {
+    console.log("Remove item:", record);
   };
 
   const columns = [
@@ -108,6 +114,9 @@ const OrderList = () => {
               }}
             >
               {record.name}
+            </div>
+            <div style={{ fontSize: 12, color: "#999" }}>
+              Mã SP: #{record.id.slice(0, 8)}
             </div>
           </div>
         </div>
@@ -341,88 +350,151 @@ const OrderList = () => {
           </Title>
         </div>
 
-        <Table
-          bordered={false}
-          columns={columns}
-          dataSource={dataSource}
-          pagination={false}
-          style={{
-            backgroundColor: "transparent",
-          }}
-        />
-      </Card>
-
-      <Card
-        style={{
-          marginTop: 24,
-          borderRadius: 16,
-          background: "linear-gradient(135deg, #fff1f0, #fff2e8)",
-          border: "2px solid #ffadd6",
-          boxShadow: "0 8px 32px rgba(255, 173, 214, 0.3)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <GiftOutlined style={{ fontSize: 24, color: "#eb2f96" }} />
-            <span
+        {listOrder.length === 0 ? (
+          <div
+            style={{
+              textAlign: "center",
+              padding: "60px 20px",
+              background: "linear-gradient(135deg, #fff9e6, #fff1f0)",
+              borderRadius: 16,
+              margin: "20px 0",
+            }}
+          >
+            <img
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-t1GeVXlHpaHHBSp4yJqgSp4v2hRiUA.png"
+              alt="Giỏ hàng trống"
               style={{
-                fontSize: 20,
-                fontWeight: 700,
-                background: "linear-gradient(135deg, #eb2f96, #722ed1)",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
+                width: 200,
+                height: 200,
+                marginBottom: 20,
+                opacity: 0.8,
+              }}
+            />
+            <Title
+              level={3}
+              style={{
+                color: "#faad14",
+                marginBottom: 12,
+                fontSize: 24,
               }}
             >
-              Tổng tiền: {totalPrice.toLocaleString("vi-VN")} ₫
-            </span>
+              Giỏ hàng của bạn đang trống
+            </Title>
+            <p
+              style={{
+                color: "#666",
+                fontSize: 16,
+                marginBottom: 30,
+              }}
+            >
+              Hãy thêm một số sản phẩm vào giỏ hàng để bắt đầu mua sắm!
+            </p>
+            <Button
+              type="primary"
+              size="large"
+              style={{
+                background: "linear-gradient(135deg, #40a9ff, #1890ff)",
+                border: "none",
+                borderRadius: 12,
+                padding: "0 40px",
+                height: 48,
+                fontSize: 16,
+                fontWeight: 600,
+              }}
+              onClick={() => navigate("/product-list")}
+            >
+              🛍️ Tiếp tục mua sắm
+            </Button>
           </div>
-        </div>
+        ) : (
+          <Table
+            bordered={false}
+            columns={columns}
+            dataSource={dataSource}
+            pagination={false}
+            style={{
+              backgroundColor: "transparent",
+            }}
+          />
+        )}
       </Card>
 
-      <Card
-        style={{
-          marginTop: 16,
-          borderRadius: 16,
-          background: "linear-gradient(135deg, #f6ffed, #f0f9ff)",
-          border: "none",
-          boxShadow: "0 8px 32px rgba(24, 144, 255, 0.15)",
-        }}
-      >
-        <Button
-          type="primary"
-          size="large"
-          block
-          style={{
-            height: 50,
-            fontSize: 18,
-            fontWeight: 600,
-            background: "linear-gradient(135deg, #40a9ff, #1890ff, #722ed1)",
-            border: "none",
-            borderRadius: 12,
-            boxShadow: "0 6px 20px rgba(24, 144, 255, 0.4)",
-            transition: "all 0.3s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "translateY(-2px)";
-            e.currentTarget.style.boxShadow =
-              "0 8px 25px rgba(24, 144, 255, 0.6)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow =
-              "0 6px 20px rgba(24, 144, 255, 0.4)";
-          }}
-        >
-          🛒 THANH TOÁN
-        </Button>
-      </Card>
+      {listOrder.length > 0 && (
+        <>
+          <Card
+            style={{
+              marginTop: 24,
+              borderRadius: 16,
+              background: "linear-gradient(135deg, #fff1f0, #fff2e8)",
+              border: "2px solid #ffadd6",
+              boxShadow: "0 8px 32px rgba(255, 173, 214, 0.3)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <GiftOutlined style={{ fontSize: 24, color: "#eb2f96" }} />
+                <span
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 700,
+                    background: "linear-gradient(135deg, #eb2f96, #722ed1)",
+                    backgroundClip: "text",
+                    WebkitBackgroundClip: "text",
+                    color: "transparent",
+                  }}
+                >
+                  Tổng tiền: {totalPrice.toLocaleString("vi-VN")} ₫
+                </span>
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            style={{
+              marginTop: 16,
+              borderRadius: 16,
+              background: "linear-gradient(135deg, #f6ffed, #f0f9ff)",
+              border: "none",
+              boxShadow: "0 8px 32px rgba(24, 144, 255, 0.15)",
+            }}
+          >
+            <Button
+              type="primary"
+              size="large"
+              block
+              style={{
+                height: 50,
+                fontSize: 18,
+                fontWeight: 600,
+                background:
+                  "linear-gradient(135deg, #40a9ff, #1890ff, #722ed1)",
+                border: "none",
+                borderRadius: 12,
+                boxShadow: "0 6px 20px rgba(24, 144, 255, 0.4)",
+                transition: "all 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow =
+                  "0 8px 25px rgba(24, 144, 255, 0.6)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow =
+                  "0 6px 20px rgba(24, 144, 255, 0.4)";
+              }}
+            >
+              🛒 THANH TOÁN
+            </Button>
+          </Card>
+        </>
+      )}
     </div>
   );
 };

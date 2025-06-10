@@ -7,6 +7,7 @@ import {
   logout,
   register,
   setAuth,
+  updateEmployee,
 } from "./reducers.ts";
 
 const UserHook = () => {
@@ -19,6 +20,9 @@ const UserHook = () => {
     (state: RootState) => state.user.registerSuccess
   );
   const userInfo = useSelector((state: RootState) => state.user.userInfo);
+  const updateSuccess = useSelector(
+    (state: RootState) => state.user.updateSuccess
+  );
 
   const SetAuth = () => {
     dispatch(setAuth(true));
@@ -45,6 +49,10 @@ const UserHook = () => {
     await dispatch(getUserInfo(body));
   };
 
+  const UpdateEmployee = (body: any) => {
+    dispatch(updateEmployee(body));
+  };
+
   return {
     isAuthenticated,
     SetAuth,
@@ -55,6 +63,8 @@ const UserHook = () => {
     ChatBotReply,
     GetUserInfo,
     userInfo,
+    UpdateEmployee,
+    updateSuccess,
   };
 };
 export default UserHook;

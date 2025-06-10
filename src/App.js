@@ -1,6 +1,7 @@
 import { Provider } from "react-redux";
 import { Navigate, Outlet, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
+import AboutUs from "./main/about/about-us.tsx";
 import HomePage from "./main/home/homepage.tsx";
 import UserHook from "./main/login/index.ts";
 import Login from "./main/login/login-form.tsx";
@@ -43,6 +44,7 @@ const App = () => {
             }
           >
             <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutUs />} />
             <Route path="/product-list" element={<ProductList />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/order-list" element={<OrderList />} />

@@ -60,6 +60,9 @@ export const getImage = createAsyncThunk(
       `/api/get-image?imagePath=${imagePath}`,
       {
         responseType: "blob",
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
       }
     );
 

@@ -53,6 +53,7 @@ export const uploadImage = createAsyncThunk(
   }
 );
 
+//dhfgjfdj
 export const getImage = createAsyncThunk(
   "product/getImage",
   async (imagePath: string) => {

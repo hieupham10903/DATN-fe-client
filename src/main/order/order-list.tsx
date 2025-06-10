@@ -489,6 +489,7 @@ const OrderList = () => {
                 e.currentTarget.style.boxShadow =
                   "0 6px 20px rgba(24, 144, 255, 0.4)";
               }}
+              onClick={() => navigate("/payment")}
             >
               🛒 THANH TOÁN
             </Button>

@@ -53,7 +53,6 @@ export const uploadImage = createAsyncThunk(
   }
 );
 
-//Deploy
 export const getImage = createAsyncThunk(
   "product/getImage",
   async (imagePath: string) => {

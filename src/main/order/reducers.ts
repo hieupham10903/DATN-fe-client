@@ -9,6 +9,7 @@ const initialState = {
 
 const apiListAllOrderItems = "/api/list-all-order-item";
 const apiUpdateQuantity = "/api/update-quantity";
+const apiDeleteOrder = "/api/delete-order-item";
 
 export const getListOrder = createAsyncThunk(
   "order/getListOrder",
@@ -44,6 +45,13 @@ export const updateQuantity = createAsyncThunk(
   }
 );
 
+export const deleteOrder = createAsyncThunk(
+  "order/deleteOrder",
+  async (id: string) => {
+    await axiosClient.post<any>(`${apiDeleteOrder}/${id}`);
+  }
+);
+
 const orderReducer = createSlice({
   name: "orderReducer",
   initialState,
@@ -68,6 +76,15 @@ const orderReducer = createSlice({
         state.updateSuccess = false;
       })
       .addCase(updateQuantity.rejected, (state, action) => {
+        state.updateSuccess = false;
+      })
+      .addCase(deleteOrder.fulfilled, (state, action) => {
+        state.updateSuccess = true;
+      })
+      .addCase(deleteOrder.pending, (state, action) => {
+        state.updateSuccess = false;
+      })
+      .addCase(deleteOrder.rejected, (state, action) => {
         state.updateSuccess = false;
       });
   },

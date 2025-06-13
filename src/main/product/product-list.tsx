@@ -77,7 +77,7 @@ const ProductList = () => {
         });
       }
     });
-  }, [listProduct, mainImageList]);
+  }, [listProduct]);
 
   const formatPrice = (price: number) => {
     return price?.toLocaleString() || "0";

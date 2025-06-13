@@ -13,7 +13,7 @@ import {
 } from "antd";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ProductHook from "./index.ts";
 
 const Card: React.FC<any> = AntCard as any;
@@ -28,9 +28,13 @@ function ProductDetail({ handleCloseModal }) {
     detailImages,
     DetailProduct,
     product,
+    OrderProduct,
+    updateSuccess,
+    userInfo,
   } = ProductHook();
 
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     id && DetailProduct(id);
@@ -61,6 +65,18 @@ function ProductDetail({ handleCloseModal }) {
   const handleQuantityChange = (value: number | null) => {
     setQuantity(value || 1);
   };
+
+  const handleOrder = () => {
+    OrderProduct({
+      productId: product.id,
+      orderId: userInfo.orderId,
+      quantity: quantity,
+    });
+  };
+
+  useEffect(() => {
+    updateSuccess && navigate("/order-list");
+  }, [updateSuccess]);
 
   return (
     <div
@@ -376,6 +392,9 @@ function ProductDetail({ handleCloseModal }) {
                   backgroundColor: "#ff4757",
                   border: "none",
                   marginTop: 20,
+                }}
+                onClick={() => {
+                  handleOrder();
                 }}
               >
                 Thêm Vào Giỏ Hàng

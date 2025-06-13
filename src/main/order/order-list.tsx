@@ -18,6 +18,7 @@ const OrderList = () => {
     userInfo,
     UpdateQuantity,
     updateSuccess,
+    DeleteOrder,
   } = OrderHook();
   const [mainImageList, setMainImageList] = useState({});
   const [totalPrice, setTotalPrice] = useState(0);
@@ -52,8 +53,8 @@ const OrderList = () => {
     });
   };
 
-  const handleRemoveItem = (record: any) => {
-    console.log("Remove item:", record);
+  const handleDelete = (record: any) => {
+    DeleteOrder(record.id);
   };
 
   const columns = [
@@ -280,7 +281,7 @@ const OrderList = () => {
         <Button
           shape="circle"
           icon={<DeleteOutlined />}
-          onClick={() => console.log("Xóa:", record)}
+          onClick={() => handleDelete(record)}
           style={{
             background: "linear-gradient(135deg, #ff7875, #ff4d4f)",
             color: "white",

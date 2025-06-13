@@ -15,6 +15,7 @@ const initialState = {
 const apiSearchProduct = "/api/search-product";
 const apiCreateProduct = "/api/create-product";
 const apiDetailProduct = "/api/get-product-by-id";
+const apiOrderProduct = "/api/add-product-to-shopping-cart";
 
 export const searchProduct = createAsyncThunk(
   "product/searchProduct",
@@ -94,6 +95,14 @@ export const getMultipleImages = createAsyncThunk(
   }
 );
 
+export const orderProduct = createAsyncThunk(
+  "product/orderProduct",
+  async (body: any) => {
+    const response = await axiosClient.post<any>(apiOrderProduct, body);
+    return response;
+  }
+);
+
 const productReducer = createSlice({
   name: "productReducer",
   initialState,
@@ -113,6 +122,7 @@ const productReducer = createSlice({
         state.totalProduct = action.payload.headers
           ? parseInt(action.payload.headers["x-total-count"], 10) || 0
           : 0;
+        state.updateSuccess = false;
       })
       .addCase(createProduct.fulfilled, (state, action) => {
         state.updateSuccess = true;
@@ -134,6 +144,15 @@ const productReducer = createSlice({
       })
       .addCase(detailProduct.fulfilled, (state, action) => {
         state.product = action.payload.data;
+      })
+      .addCase(orderProduct.fulfilled, (state, action) => {
+        state.updateSuccess = true;
+      })
+      .addCase(orderProduct.pending, (state, action) => {
+        state.updateSuccess = false;
+      })
+      .addCase(orderProduct.rejected, (state, action) => {
+        state.updateSuccess = false;
       });
   },
 });

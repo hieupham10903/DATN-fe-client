@@ -1,6 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../reducers.ts";
-import { getImage, getListOrder, updateQuantity } from "./reducers.ts";
+import {
+  deleteOrder,
+  getImage,
+  getListOrder,
+  updateQuantity,
+} from "./reducers.ts";
 
 const OrderHook = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,6 +32,10 @@ const OrderHook = () => {
     return dispatch(updateQuantity(body));
   };
 
+  const DeleteOrder = (id: string) => {
+    return dispatch(deleteOrder(id));
+  };
+
   return {
     GetListOrder,
     listOrder,
@@ -35,6 +44,7 @@ const OrderHook = () => {
     userInfo,
     UpdateQuantity,
     updateSuccess,
+    DeleteOrder,
   };
 };
 export default OrderHook;

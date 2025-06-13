@@ -6,6 +6,7 @@ import {
   detailProduct,
   getImage,
   getMultipleImages,
+  orderProduct,
   resetState,
   searchProduct,
   uploadImage,
@@ -34,6 +35,8 @@ const ProductHook = () => {
   );
 
   const product = useSelector((state: RootState) => state.product.product);
+
+  const userInfo = useSelector((state: RootState) => state.user.userInfo);
 
   const GetDataSearch = (paginationState) => {
     const handlePaginationState = {
@@ -77,6 +80,10 @@ const ProductHook = () => {
     dispatch(detailProduct(id));
   };
 
+  const OrderProduct = (body: any) => {
+    dispatch(orderProduct(body));
+  };
+
   return {
     GetDataSearch,
     listProduct,
@@ -92,6 +99,8 @@ const ProductHook = () => {
     ResetProductState,
     DetailProduct,
     product,
+    OrderProduct,
+    userInfo,
   };
 };
 export default ProductHook;

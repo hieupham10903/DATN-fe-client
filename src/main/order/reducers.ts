@@ -5,11 +5,13 @@ const initialState = {
   listOrder: [],
   updateSuccess: false,
   mainImage: null as string | null,
+  order: undefined as any,
 };
 
 const apiListAllOrderItems = "/api/list-all-order-item";
 const apiUpdateQuantity = "/api/update-quantity";
 const apiDeleteOrder = "/api/delete-order-item";
+const apiDetailOrder = "/api/get-detail-order";
 
 export const getListOrder = createAsyncThunk(
   "order/getListOrder",
@@ -52,6 +54,15 @@ export const deleteOrder = createAsyncThunk(
   }
 );
 
+export const getDetailOrder = createAsyncThunk(
+  "order/getDetailOrder",
+  async (orderId: string) => {
+    const requestUrl = `${apiDetailOrder}/${orderId}`;
+    const response = await axiosClient.post<any>(requestUrl);
+    return response;
+  }
+);
+
 const orderReducer = createSlice({
   name: "orderReducer",
   initialState,
@@ -86,6 +97,9 @@ const orderReducer = createSlice({
       })
       .addCase(deleteOrder.rejected, (state, action) => {
         state.updateSuccess = false;
+      })
+      .addCase(getDetailOrder.fulfilled, (state, action) => {
+        state.order = action.payload.data;
       });
   },
 });

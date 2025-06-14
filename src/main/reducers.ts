@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "../main/login/reducers.ts";
 import orderReducer from "../main/order/reducers.ts";
+import paymentReducer from "../main/payment/reducers.ts";
 import productReducer from "../main/product/reducers.ts";
 
 export const store = configureStore({
@@ -8,6 +9,7 @@ export const store = configureStore({
     user: userReducer,
     product: productReducer,
     order: orderReducer,
+    payment: paymentReducer,
   },
 });
 

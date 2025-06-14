@@ -25,14 +25,8 @@ const { Title, Text } = Typography;
 const { Option } = Select;
 
 const VnpayPaymentPage = () => {
-  const {
-    CreatePayment,
-    updateSuccess,
-    urlVnPay,
-    userInfo,
-    GetDetailOrder,
-    order,
-  } = PaymentHook();
+  const { CreatePayment, urlVnPay, userInfo, GetDetailOrder, order } =
+    PaymentHook();
   const [loading, setLoading] = useState(false);
   const [paymentInitiated, setPaymentInitiated] = useState(false);
   const [shippingAddress, setShippingAddress] = useState({
@@ -100,13 +94,16 @@ const VnpayPaymentPage = () => {
   useEffect(() => {
     form.setFieldValue("name", userInfo.name);
     GetDetailOrder(userInfo.orderId);
+  }, [userInfo]);
+
+  useEffect(() => {
     setPaymentInfo({
       orderId: userInfo?.orderId,
       amount: order?.totalAmount,
       description: `Thanh toán đơn hàng #${userInfo?.orderId}`,
       customerName: userInfo?.name,
     });
-  }, [userInfo]);
+  }, [userInfo, order]);
 
   return (
     <div style={{ minHeight: "100vh", background: "#f0f2f5", padding: "24px" }}>

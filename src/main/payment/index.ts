@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { getDetailOrder } from "../order/reducers.ts";
 import { AppDispatch, RootState } from "../reducers.ts";
-import { createPayment } from "./reducers.ts";
+import { createPayment, paymentSuccess } from "./reducers.ts";
 
 const PaymentHook = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -24,6 +24,10 @@ const PaymentHook = () => {
     dispatch(getDetailOrder(orderId));
   };
 
+  const PaymentSuccess = (orderId: string) => {
+    dispatch(paymentSuccess(orderId));
+  };
+
   return {
     CreatePayment,
     updateSuccess,
@@ -31,6 +35,7 @@ const PaymentHook = () => {
     userInfo,
     GetDetailOrder,
     order,
+    PaymentSuccess,
   };
 };
 export default PaymentHook;

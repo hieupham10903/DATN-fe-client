@@ -7,11 +7,22 @@ const initialState = {
 };
 
 const apiCreatePayment = "/api/payment";
+const apiPaymentSuccess = "/api/payment/payment-sucess";
 
 export const createPayment = createAsyncThunk(
   "payment/createPayment",
   async (body: any) => {
     const response = await axiosClient.post<any>(apiCreatePayment, body);
+    return response;
+  }
+);
+
+export const paymentSuccess = createAsyncThunk(
+  "payment/paymentSuccess",
+  async (orderId: string) => {
+    const response = await axiosClient.post<any>(
+      `${apiPaymentSuccess}/${orderId}`
+    );
     return response;
   }
 );

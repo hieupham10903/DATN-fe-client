@@ -8,6 +8,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Card, Col, Divider, Row, Space, Tag, Typography } from "antd";
 import { useEffect, useRef, useState } from "react";
+import { generateInvoicePDF } from "./generateInvoicePDF.ts";
 import PaymentHook from "./index.ts";
 
 const { Title, Text } = Typography;
@@ -24,7 +25,14 @@ interface PaymentSuccessPageProps {
 }
 
 const PaymentSuccessPage = ({ transactionInfo }: PaymentSuccessPageProps) => {
-  const { userInfo, GetDetailOrder, order, PaymentSuccess } = PaymentHook();
+  const {
+    userInfo,
+    GetDetailOrder,
+    order,
+    PaymentSuccess,
+    GetListOrderItemsLastest,
+    listOrderItemsLastest,
+  } = PaymentHook();
   const hasCalled = useRef(false);
 
   const [paymentInfo, setPaymentInfo] = useState({
@@ -85,8 +93,8 @@ const PaymentSuccessPage = ({ transactionInfo }: PaymentSuccessPageProps) => {
 
   // Xử lý tải xuống
   const handleDownload = () => {
-    // Logic tải xuống hóa đơn PDF
-    console.log("Downloading receipt...");
+    // GetListOrderItemsLastest(userInfo.orderId);
+    generateInvoicePDF();
   };
 
   // Xử lý về trang chủ

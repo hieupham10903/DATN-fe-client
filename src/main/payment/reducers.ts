@@ -4,10 +4,12 @@ import axiosClient from "../common/axiosClient.ts";
 const initialState = {
   updateSuccess: false,
   urlVnPay: null as any,
+  listOrderItemsLastest: [] as any,
 };
 
-const apiCreatePayment = "/api/payment";
+const apiCreatePayment = "/api/payment/submitOrder";
 const apiPaymentSuccess = "/api/payment/payment-sucess";
+const apiListOrderItemsLastest = "/api/max-order-time-list";
 
 export const createPayment = createAsyncThunk(
   "payment/createPayment",
@@ -27,6 +29,16 @@ export const paymentSuccess = createAsyncThunk(
   }
 );
 
+export const getListOrderItemsLastest = createAsyncThunk(
+  "payment/getListOrderItemsLastest",
+  async (orderId: string) => {
+    const response = await axiosClient.get<any>(
+      `${apiListOrderItemsLastest}/${orderId}`
+    );
+    return response;
+  }
+);
+
 const paymentReducer = createSlice({
   name: "paymentReducer",
   initialState,
@@ -36,9 +48,13 @@ const paymentReducer = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(createPayment.fulfilled, (state, action) => {
-      state.urlVnPay = action.payload.data;
-    });
+    builder
+      .addCase(createPayment.fulfilled, (state, action) => {
+        state.urlVnPay = action.payload.data;
+      })
+      .addCase(getListOrderItemsLastest.fulfilled, (state, action) => {
+        state.listOrderItemsLastest = action.payload.data;
+      });
   },
 });
 

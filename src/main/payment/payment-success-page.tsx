@@ -88,13 +88,38 @@ const PaymentSuccessPage = ({ transactionInfo }: PaymentSuccessPageProps) => {
 
   // Xử lý in hóa đơn
   const handlePrint = () => {
-    window.print();
+    GetListOrderItemsLastest(userInfo.orderId).then((value) => {
+      const payload = value.payload as any;
+      const orderItems = payload.data;
+
+      const info = {
+        userName: userInfo?.name,
+        paymentDate: order?.paymentDate,
+        orderId: userInfo?.orderId,
+        paymentId: order?.paymentId,
+        paymentMethod: "VNPay",
+      };
+
+      generateInvoicePDF(orderItems, info, true);
+    });
   };
 
   // Xử lý tải xuống
   const handleDownload = () => {
-    // GetListOrderItemsLastest(userInfo.orderId);
-    generateInvoicePDF();
+    GetListOrderItemsLastest(userInfo.orderId).then((value) => {
+      const payload = value.payload as any;
+      const orderItems = payload.data;
+
+      const info = {
+        userName: userInfo?.name,
+        paymentDate: order?.paymentDate,
+        orderId: userInfo?.orderId,
+        paymentId: order?.paymentId,
+        paymentMethod: "VNPay",
+      };
+
+      generateInvoicePDF(orderItems, info, false);
+    });
   };
 
   // Xử lý về trang chủ

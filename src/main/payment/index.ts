@@ -37,7 +37,7 @@ const PaymentHook = () => {
   };
 
   const GetListOrderItemsLastest = (orderId: string) => {
-    dispatch(getListOrderItemsLastest(orderId));
+    return dispatch(getListOrderItemsLastest(orderId));
   };
 
   return {

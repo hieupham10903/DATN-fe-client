@@ -209,6 +209,7 @@ const HomePage = () => {
                   }
                   bodyStyle={{ display: "none" }}
                   style={{ borderRadius: "12px", overflow: "hidden" }}
+                  onClick={() => navigate("/product-list")}
                 />
               </Col>
             ))}

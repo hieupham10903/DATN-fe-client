@@ -4,6 +4,7 @@ import { PaginationStateWithQuery } from "../common/common.ts";
 import {
   createProduct,
   detailProduct,
+  getAllCategory,
   getImage,
   getMultipleImages,
   orderProduct,
@@ -35,6 +36,10 @@ const ProductHook = () => {
   );
 
   const product = useSelector((state: RootState) => state.product.product);
+
+  const listAllCategory = useSelector(
+    (state: RootState) => state.product.listAllCategory
+  );
 
   const userInfo = useSelector((state: RootState) => state.user.userInfo);
 
@@ -84,6 +89,10 @@ const ProductHook = () => {
     dispatch(orderProduct(body));
   };
 
+  const GetAllCategory = () => {
+    dispatch(getAllCategory());
+  };
+
   return {
     GetDataSearch,
     listProduct,
@@ -101,6 +110,8 @@ const ProductHook = () => {
     product,
     OrderProduct,
     userInfo,
+    GetAllCategory,
+    listAllCategory,
   };
 };
 export default ProductHook;

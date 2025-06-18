@@ -1,11 +1,22 @@
+"use client";
+
 import {
-  DollarOutlined,
   EyeOutlined,
+  FilterOutlined,
   HeartOutlined,
-  ShoppingCartOutlined,
+  ReloadOutlined,
   StarFilled,
 } from "@ant-design/icons";
-import { Badge, Pagination, Tooltip } from "antd";
+import {
+  Badge,
+  Button,
+  Col,
+  Pagination,
+  Row,
+  Select,
+  Slider,
+  Tooltip,
+} from "antd";
 import Card from "antd/es/card/Card";
 import Meta from "antd/es/card/Meta";
 import { useEffect, useState } from "react";
@@ -22,6 +33,8 @@ const ProductList = () => {
     ResetProductState,
     GetMainImage,
     mainImage,
+    GetAllCategory,
+    listAllCategory,
   } = ProductHook();
 
   const navigate = useNavigate();
@@ -40,6 +53,8 @@ const ProductList = () => {
   const [visibleDetail, setVisibleDetail] = useState(false);
   const [mainImageList, setMainImageList] = useState({});
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [priceRange, setPriceRange] = useState([0, 10000000]);
 
   const onChangePagination = (current, pageSize) => {
     setPagination((prev) => ({
@@ -48,6 +63,10 @@ const ProductList = () => {
       pageSize,
     }));
   };
+
+  useEffect(() => {
+    GetAllCategory();
+  }, []);
 
   useEffect(() => {
     GetDataSearch(pagination);
@@ -83,6 +102,23 @@ const ProductList = () => {
     return price?.toLocaleString() || "0";
   };
 
+  const handleSearch = () => {
+    setPagination((prev) => ({
+      ...prev,
+      current: 1,
+      pageSize: 6,
+      dataSearch: {
+        categoryId: {
+          equals: selectedCategory,
+        },
+        price: {
+          greaterThanOrEqual: priceRange?.[0],
+          lessThanOrEqual: priceRange?.[1],
+        },
+      },
+    }));
+  };
+
   return (
     <div className="product-list-container">
       {/* Header Section */}
@@ -91,6 +127,79 @@ const ProductList = () => {
         <p className="product-subtitle">
           Khám phá những sản phẩm chất lượng cao
         </p>
+      </div>
+
+      {/* Filter Section */}
+      <div className="filter-section">
+        <Row gutter={[16, 16]} align="middle">
+          <Col xs={24} sm={12} md={8}>
+            <div className="filter-item">
+              <label className="filter-label">Danh mục sản phẩm</label>
+              <Select
+                placeholder="Chọn danh mục"
+                style={{ width: "100%" }}
+                value={selectedCategory}
+                onChange={(value) => {
+                  setSelectedCategory(value);
+                }}
+                allowClear
+                options={listAllCategory.map((item) => ({
+                  value: item.id,
+                  label: item.name,
+                }))}
+              ></Select>
+            </div>
+          </Col>
+
+          <Col xs={24} sm={12} md={10}>
+            <div className="filter-item">
+              <label className="filter-label">
+                Khoảng giá: {priceRange[0].toLocaleString()}₫ -{" "}
+                {priceRange[1].toLocaleString()}₫
+              </label>
+              <Slider
+                range
+                min={0}
+                max={10000000}
+                step={100000}
+                value={priceRange}
+                onChange={(value) => {
+                  setPriceRange(value);
+                  // TODO: Implement price range filter logic
+                }}
+                tooltip={{
+                  formatter: (value) => `${value?.toLocaleString()}₫`,
+                }}
+              />
+            </div>
+          </Col>
+
+          <Col xs={24} sm={24} md={6}>
+            <div className="filter-actions">
+              <Button
+                type="primary"
+                icon={<FilterOutlined />}
+                onClick={() => {
+                  handleSearch();
+                }}
+                className="filter-btn"
+              >
+                Áp dụng
+              </Button>
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setPriceRange([0, 10000000]);
+                  // TODO: Implement reset filter logic
+                }}
+                className="reset-btn"
+              >
+                Đặt lại
+              </Button>
+            </div>
+          </Col>
+        </Row>
       </div>
 
       {/* Product Grid */}
@@ -107,6 +216,7 @@ const ProductList = () => {
                     src={
                       mainImageList[item.id]?.payload ||
                       "https://via.placeholder.com/300x300?text=No+Image" ||
+                      "/placeholder.svg" ||
                       "/placeholder.svg"
                     }
                     className="product-image"
@@ -139,24 +249,24 @@ const ProductList = () => {
                     <span>Xem</span>
                   </div>
                 </Tooltip>,
-                <Tooltip title="Thêm vào giỏ" key="cart">
-                  <div
-                    className="action-button cart-btn"
-                    onClick={() => console.log("Thêm vào giỏ:", item)}
-                  >
-                    <ShoppingCartOutlined />
-                    <span>Giỏ hàng</span>
-                  </div>
-                </Tooltip>,
-                <Tooltip title="Mua ngay" key="buy">
-                  <div
-                    className="action-button buy-btn"
-                    onClick={() => console.log("Mua ngay:", item)}
-                  >
-                    <DollarOutlined />
-                    <span>Mua ngay</span>
-                  </div>
-                </Tooltip>,
+                // <Tooltip title="Thêm vào giỏ" key="cart">
+                //   <div
+                //     className="action-button cart-btn"
+                //     onClick={() => console.log("Thêm vào giỏ:", item)}
+                //   >
+                //     <ShoppingCartOutlined />
+                //     <span>Giỏ hàng</span>
+                //   </div>
+                // </Tooltip>,
+                // <Tooltip title="Mua ngay" key="buy">
+                //   <div
+                //     className="action-button buy-btn"
+                //     onClick={() => console.log("Mua ngay:", item)}
+                //   >
+                //     <DollarOutlined />
+                //     <span>Mua ngay</span>
+                //   </div>
+                // </Tooltip>,
               ]}
             >
               <div className="product-content">
@@ -207,7 +317,6 @@ const ProductList = () => {
         ))}
       </div>
 
-      {/* Pagination */}
       <div className="pagination-container">
         <Pagination
           current={pagination.current}

@@ -10,12 +10,14 @@ const initialState = {
   updateSuccess: false,
   mainImage: null as string | null,
   detailImages: [] as string[],
+  listAllCategory: [] as any[],
 };
 
 const apiSearchProduct = "/api/search-product";
 const apiCreateProduct = "/api/create-product";
 const apiDetailProduct = "/api/get-product-by-id";
 const apiOrderProduct = "/api/add-product-to-shopping-cart";
+const apiGetAllCategory = "/api/get-all-category";
 
 export const searchProduct = createAsyncThunk(
   "product/searchProduct",
@@ -103,6 +105,14 @@ export const orderProduct = createAsyncThunk(
   }
 );
 
+export const getAllCategory = createAsyncThunk(
+  "product/getAllCategory",
+  async () => {
+    const response = await axiosClient.post<any>(apiGetAllCategory);
+    return response;
+  }
+);
+
 const productReducer = createSlice({
   name: "productReducer",
   initialState,
@@ -153,6 +163,9 @@ const productReducer = createSlice({
       })
       .addCase(orderProduct.rejected, (state, action) => {
         state.updateSuccess = false;
+      })
+      .addCase(getAllCategory.fulfilled, (state, action) => {
+        state.listAllCategory = action.payload.data;
       });
   },
 });

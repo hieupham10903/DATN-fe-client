@@ -311,3 +311,95 @@
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 1000px 100%;
 }
+
+/* Filter Section Styles */
+.filter-section {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 32px;
+  border: 1px solid #e2e8f0;
+}
+
+.filter-item {
+  width: 100%;
+}
+
+.filter-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 8px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.filter-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.filter-btn:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateY(-1px);
+}
+
+.reset-btn {
+  border-radius: 8px;
+  border-color: #e2e8f0;
+  color: #718096;
+  font-weight: 500;
+}
+
+.reset-btn:hover {
+  border-color: #cbd5e0;
+  color: #4a5568;
+  transform: translateY(-1px);
+}
+
+/* Ant Design Slider Customization */
+.ant-slider-track {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.ant-slider-handle {
+  border-color: #667eea;
+}
+
+.ant-slider-handle:hover {
+  border-color: #5a67d8;
+}
+
+.ant-slider-handle:focus {
+  border-color: #5a67d8;
+  box-shadow: 0 0 0 5px rgba(102, 126, 234, 0.12);
+}
+
+/* Responsive adjustments for filter section */
+@media (max-width: 768px) {
+  .filter-section {
+    padding: 16px;
+  }
+  
+  .filter-actions {
+    justify-content: stretch;
+  }
+  
+  .filter-actions .ant-btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-actions {
+    flex-direction: column;
+  }
+}

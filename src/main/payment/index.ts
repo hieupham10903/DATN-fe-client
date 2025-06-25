@@ -3,6 +3,7 @@ import { getDetailOrder } from "../order/reducers.ts";
 import { AppDispatch, RootState } from "../reducers.ts";
 import {
   createPayment,
+  createPaymentOffine,
   getListOrderItemsLastest,
   paymentSuccess,
 } from "./reducers.ts";
@@ -28,6 +29,10 @@ const PaymentHook = () => {
     dispatch(createPayment(body));
   };
 
+  const CreatePaymentOffine = (body: any) => {
+    dispatch(createPaymentOffine(body));
+  };
+
   const GetDetailOrder = (orderId: string) => {
     dispatch(getDetailOrder(orderId));
   };
@@ -42,6 +47,7 @@ const PaymentHook = () => {
 
   return {
     CreatePayment,
+    CreatePaymentOffine,
     updateSuccess,
     urlVnPay,
     userInfo,

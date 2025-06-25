@@ -6,6 +6,7 @@ import HomePage from "./main/home/homepage.tsx";
 import UserHook from "./main/login/index.ts";
 import Login from "./main/login/login-form.tsx";
 import OrderList from "./main/order/order-list.tsx";
+import CodPaymentPage from "./main/payment/cod-payment-page.tsx";
 import VnpayPaymentPage from "./main/payment/payment-page.tsx";
 import PaymentSuccessPage from "./main/payment/payment-success-page.tsx";
 import ProductDetail from "./main/product/product-detail.tsx";
@@ -50,6 +51,7 @@ const App = () => {
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/order-list" element={<OrderList />} />
             <Route path="/payment" element={<VnpayPaymentPage />} />
+            <Route path="/payment-offline" element={<CodPaymentPage />} />
             <Route path="/payment-success" element={<PaymentSuccessPage />} />
           </Route>
 

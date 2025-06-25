@@ -10,11 +10,20 @@ const initialState = {
 const apiCreatePayment = "/api/payment/submitOrder";
 const apiPaymentSuccess = "/api/payment/payment-sucess";
 const apiListOrderItemsLastest = "/api/max-order-time-list";
+const apiCreatePaymentOffline = "/api/payment/submitOrder-offline";
 
 export const createPayment = createAsyncThunk(
   "payment/createPayment",
   async (body: any) => {
     const response = await axiosClient.post<any>(apiCreatePayment, body);
+    return response;
+  }
+);
+
+export const createPaymentOffine = createAsyncThunk(
+  "payment/createPaymentOffine",
+  async (body: any) => {
+    const response = await axiosClient.post<any>(apiCreatePaymentOffline, body);
     return response;
   }
 );

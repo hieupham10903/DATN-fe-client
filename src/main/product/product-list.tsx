@@ -5,7 +5,6 @@ import {
   FilterOutlined,
   HeartOutlined,
   ReloadOutlined,
-  StarFilled,
 } from "@ant-design/icons";
 import {
   Badge,
@@ -317,16 +316,6 @@ const ProductList = () => {
                       {item.stockQuantity} sản phẩm
                     </span>
                   </div>
-                </div>
-
-                {/* Rating placeholder */}
-                <div className="product-rating">
-                  <StarFilled className="star-icon" />
-                  <StarFilled className="star-icon" />
-                  <StarFilled className="star-icon" />
-                  <StarFilled className="star-icon" />
-                  <StarFilled className="star-icon inactive" />
-                  <span className="rating-text">(4.0)</span>
                 </div>
               </div>
             </Card>

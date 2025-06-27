@@ -1,26 +1,43 @@
 "use client";
 
-import { PictureOutlined } from "@ant-design/icons";
 import {
-  Card as AntCard,
-  Image as AntImage,
+  CheckCircleOutlined,
+  CreditCardOutlined,
+  PictureOutlined,
+  ShoppingCartOutlined,
+  SyncOutlined,
+  TruckOutlined,
+  ZoomInOutlined,
+} from "@ant-design/icons";
+
+import {
+  Badge,
   Button,
+  Card,
   Col,
-  Divider,
+  Image,
   InputNumber,
   Row,
+  Skeleton,
+  Space,
+  Tabs,
+  Tag,
   Typography,
 } from "antd";
+
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ProductHook from "./index.ts";
 
-const Card: React.FC<any> = AntCard as any;
-const Image: React.FC<any> = AntImage as any;
 const { Title, Text, Paragraph } = Typography;
+const { TabPane } = Tabs;
 
-function ProductDetail({ handleCloseModal }) {
+interface ProductDetailProps {
+  handleCloseModal?: () => void;
+}
+
+const ProductDetail: React.FC<ProductDetailProps> = ({ handleCloseModal }) => {
   const {
     GetMainImage,
     GetDetailImages,
@@ -33,16 +50,24 @@ function ProductDetail({ handleCloseModal }) {
     userInfo,
   } = ProductHook();
 
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    id && DetailProduct(id);
+    if (id) {
+      setLoading(true);
+      DetailProduct(id).finally(() => setLoading(false));
+    }
   }, [id]);
 
-  const imageDetails = product?.imageDetail
+  const imageDetails: string[] = product?.imageDetail
     ? product?.imageDetail.split(",")
     : [];
+
+  const allImages: any[] = [mainImage, ...detailImages].filter(Boolean);
 
   useEffect(() => {
     if (product?.imageUrl && !mainImage) {
@@ -56,17 +81,20 @@ function ProductDetail({ handleCloseModal }) {
     }
   }, [imageDetails]);
 
-  const originalPrice = product?.price
+  const originalPrice: number = product?.price
     ? Number.parseInt(product?.price) + 500000
     : 970000;
-  const discountPrice = product?.price || 111111;
-  const [quantity, setQuantity] = useState(1);
 
-  const handleQuantityChange = (value: number | null) => {
+  const discountPrice: number = product?.price || 111111;
+  const discountPercent: number = Math.round(
+    ((originalPrice - discountPrice) / originalPrice) * 100
+  );
+
+  const handleQuantityChange = (value: number | null): void => {
     setQuantity(value || 1);
   };
 
-  const handleOrder = () => {
+  const handleOrder = (): void => {
     OrderProduct({
       productId: product.id,
       orderId: userInfo.orderId,
@@ -78,99 +106,176 @@ function ProductDetail({ handleCloseModal }) {
     updateSuccess && navigate("/order-list");
   }, [updateSuccess]);
 
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "20px" }}>
+        <Row gutter={[32, 32]}>
+          <Col span={12}>
+            <Skeleton.Image style={{ width: "100%", height: 500 }} />
+          </Col>
+          <Col span={12}>
+            <Skeleton active paragraph={{ rows: 10 }} />
+          </Col>
+        </Row>
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
         maxWidth: 1200,
         margin: "0 auto",
         padding: "20px",
-        backgroundColor: "#f5f5f5",
-        minHeight: "100vh",
+        backgroundColor: "#f8f9fa",
       }}
     >
-      <Row gutter={[24, 24]} style={{ minHeight: "700px" }}>
-        {/* Cột trái - ảnh */}
-        <Col span={10} style={{ display: "flex" }}>
+      <Row gutter={[32, 32]} style={{ minHeight: "600px" }}>
+        {/* Left Column - Images */}
+        <Col xs={24} lg={12} style={{ display: "flex" }}>
           <Card
             style={{
-              borderRadius: 8,
+              borderRadius: 16,
               overflow: "hidden",
-              backgroundColor: "white",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+              border: "none",
               width: "100%",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+            }}
+            bodyStyle={{
+              padding: 0,
+              flex: 1,
               display: "flex",
               flexDirection: "column",
             }}
           >
-            {mainImage ? (
-              <Image
-                src={mainImage || "/placeholder.svg"}
-                alt="Ảnh sản phẩm"
-                width="100%"
-                height={450}
-                style={{
-                  objectFit: "contain",
-                  backgroundColor: "#fafafa",
-                }}
-                preview
-              />
-            ) : (
+            {/* Main Image */}
+            <div
+              style={{ position: "relative", backgroundColor: "#fff", flex: 1 }}
+            >
+              {discountPercent > 0 && (
+                <Badge.Ribbon
+                  text={`-${discountPercent}%`}
+                  color="red"
+                  style={{ fontSize: 14, fontWeight: "bold" }}
+                />
+              )}
               <div
                 style={{
-                  height: 350,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  position: "relative",
+                  overflow: "hidden",
+                  height: "100%",
+                  minHeight: "400px",
                 }}
               >
-                <Text>Đang tải ảnh...</Text>
+                {allImages.length > 0 ? (
+                  <Image
+                    src={
+                      allImages[selectedImageIndex] ||
+                      "/placeholder.svg?height=500&width=500" ||
+                      "/placeholder.svg" ||
+                      "/placeholder.svg"
+                    }
+                    alt="Ảnh sản phẩm"
+                    width="100%"
+                    height="100%"
+                    style={{
+                      objectFit: "contain",
+                      backgroundColor: "#fafafa",
+                      minHeight: "400px",
+                    }}
+                    preview={{
+                      mask: (
+                        <div
+                          style={{
+                            background: "rgba(0,0,0,0.5)",
+                            color: "white",
+                            padding: "8px 12px",
+                            borderRadius: 6,
+                            fontSize: 14,
+                          }}
+                        >
+                          <ZoomInOutlined /> Xem chi tiết
+                        </div>
+                      ),
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      height: "100%",
+                      minHeight: "400px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#f5f5f5",
+                    }}
+                  >
+                    <PictureOutlined style={{ fontSize: 48, color: "#ccc" }} />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Thumbnail Images */}
+            {allImages.length > 1 && (
+              <div style={{ padding: "16px", flexShrink: 0 }}>
+                <Row gutter={[8, 8]}>
+                  {allImages.map((image: string, idx: number) => (
+                    <Col span={6} key={idx}>
+                      <div
+                        onClick={() => setSelectedImageIndex(idx)}
+                        style={{
+                          cursor: "pointer",
+                          border:
+                            selectedImageIndex === idx
+                              ? "2px solid #1890ff"
+                              : "1px solid #eee",
+                          borderRadius: 8,
+                          overflow: "hidden",
+                          transition: "all 0.3s ease",
+                        }}
+                      >
+                        <Image
+                          src={image || "/placeholder.svg?height=80&width=80"}
+                          alt={`Ảnh ${idx + 1}`}
+                          width="100%"
+                          height={80}
+                          style={{ objectFit: "cover" }}
+                          preview={false}
+                        />
+                      </div>
+                    </Col>
+                  ))}
+                </Row>
               </div>
             )}
-
-            <Divider orientation="left" style={{ margin: "16px 0" }}>
-              <PictureOutlined /> Ảnh chi tiết
-            </Divider>
-
-            <Row gutter={[8, 8]} style={{ flex: 1, padding: "0 16px 16px" }}>
-              {detailImages.length > 0 ? (
-                detailImages.map((image, idx) => (
-                  <Col span={6} key={idx}>
-                    <Image
-                      src={image || "/placeholder.svg"}
-                      alt={`Ảnh chi tiết ${idx + 1}`}
-                      width="100%"
-                      height={80}
-                      style={{
-                        objectFit: "cover",
-                        borderRadius: 8,
-                        border: "1px solid #eee",
-                      }}
-                      preview
-                    />
-                  </Col>
-                ))
-              ) : (
-                <Col span={24}>
-                  <Text style={{ padding: 8 }}>Không có ảnh chi tiết</Text>
-                </Col>
-              )}
-            </Row>
           </Card>
         </Col>
 
-        {/* Cột phải - thông tin sản phẩm */}
-        <Col span={14} style={{ display: "flex" }}>
+        {/* Right Column - Product Info */}
+        <Col xs={24} lg={12} style={{ display: "flex" }}>
           <Card
             style={{
-              borderRadius: 8,
-              backgroundColor: "white",
+              borderRadius: 16,
+              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+              border: "none",
               width: "100%",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+            }}
+            bodyStyle={{
+              padding: "24px",
+              flex: 1,
               display: "flex",
               flexDirection: "column",
             }}
           >
             <div
               style={{
-                padding: "32px",
                 flex: 1,
                 display: "flex",
                 flexDirection: "column",
@@ -178,231 +283,277 @@ function ProductDetail({ handleCloseModal }) {
               }}
             >
               <div>
+                {/* Product Title */}
                 <Title
-                  level={2}
+                  level={1}
                   style={{
-                    fontSize: 32,
-                    fontWeight: 600,
+                    fontSize: 28,
+                    fontWeight: 700,
                     marginBottom: 16,
-                    color: "#333",
+                    color: "#1a1a1a",
+                    lineHeight: 1.3,
                   }}
                 >
-                  {product?.name || "AAAA"}
+                  {product?.name || "Tên sản phẩm"}
                 </Title>
 
-                <div style={{ marginBottom: 20 }}>
-                  <Text
-                    strong
-                    style={{
-                      fontSize: 36,
-                      color: "#ff4d4f",
-                      marginRight: 16,
-                    }}
-                  >
-                    đ{discountPrice.toLocaleString()} ₫
-                  </Text>
-                  <Text
-                    delete
-                    style={{
-                      color: "#ccc",
-                      fontSize: 16,
-                    }}
-                  >
-                    đ{originalPrice.toLocaleString()} ₫
-                  </Text>
-                </div>
-
-                <div style={{ marginBottom: 12, fontSize: 16 }}>
-                  <Text type="secondary">Loại sản phẩm: </Text>
-                  <Text>
-                    {product?.categoryId ||
-                      "af87cfee-3841-4238-9bfa-bd4d97e7f457"}
-                  </Text>
-                </div>
-
-                <div style={{ marginBottom: 12, fontSize: 16 }}>
-                  <Text type="secondary">Số lượng còn lại: </Text>
-                  <Text>{product?.stockQuantity ?? 11}</Text>
-                </div>
-
-                <div style={{ marginBottom: 12, fontSize: 16 }}>
-                  <Text type="secondary">Mô tả:</Text>
-                </div>
-                <div style={{ marginBottom: 20, fontSize: 16 }}>
-                  <Text>{product?.description || "AAAA"}</Text>
-                </div>
-
-                {/* Thêm phần đánh giá */}
-                <div style={{ marginBottom: 16, fontSize: 16 }}>
-                  <Text type="secondary">Đánh giá: </Text>
-                  <span style={{ color: "#faad14" }}>★★★★☆</span>
-                  <Text style={{ marginLeft: 8, color: "#666" }}>(4/5)</Text>
-                </div>
-
-                {/* Thêm thông tin chi tiết sản phẩm */}
+                {/* Price */}
                 <div
                   style={{
-                    backgroundColor: "#f9f9f9",
+                    marginBottom: 24,
+                    padding: "16px 20px",
+                    backgroundColor: "#fff2f0",
+                    borderRadius: 12,
+                    border: "1px solid #ffccc7",
+                  }}
+                >
+                  <Space align="baseline" size={12}>
+                    <Text
+                      style={{
+                        fontSize: 32,
+                        fontWeight: 700,
+                        color: "#ff4d4f",
+                      }}
+                    >
+                      {discountPrice.toLocaleString()}₫
+                    </Text>
+                    {discountPercent > 0 && (
+                      <Text
+                        delete
+                        style={{
+                          fontSize: 18,
+                          color: "#999",
+                        }}
+                      >
+                        {originalPrice.toLocaleString()}₫
+                      </Text>
+                    )}
+                  </Space>
+                </div>
+
+                {/* Product Tags */}
+                <div style={{ marginBottom: 20 }}>
+                  <Space wrap>
+                    <Tag color="green">Miễn phí vận chuyển</Tag>
+                    <Tag color="blue">Chính hãng 100%</Tag>
+                    <Tag color="orange">Bảo hành 12 tháng</Tag>
+                  </Space>
+                </div>
+
+                {/* Quick Info */}
+                <div
+                  style={{
+                    marginBottom: 24,
                     padding: "16px",
-                    borderRadius: "8px",
-                    marginBottom: "20px",
+                    backgroundColor: "#f6ffed",
+                    borderRadius: 8,
+                    border: "1px solid #b7eb8f",
                   }}
                 >
-                  <Text
-                    strong
-                    style={{ fontSize: 16, display: "block", marginBottom: 12 }}
-                  >
-                    Thông tin chi tiết:
-                  </Text>
-                  <div style={{ fontSize: 14, lineHeight: "1.6" }}>
-                    <div style={{ marginBottom: 8 }}>
-                      <Text type="secondary">Chất liệu: </Text>
-                      <Text>Gốm sứ cao cấp</Text>
-                    </div>
-                    <div style={{ marginBottom: 8 }}>
-                      <Text type="secondary">Kích thước: </Text>
-                      <Text>Cao 25cm x Rộng 18cm</Text>
-                    </div>
-                    <div style={{ marginBottom: 8 }}>
-                      <Text type="secondary">Xuất xứ: </Text>
-                      <Text>Việt Nam</Text>
-                    </div>
-                    <div style={{ marginBottom: 8 }}>
-                      <Text type="secondary">Bảo hành: </Text>
-                      <Text>12 tháng</Text>
-                    </div>
-                  </div>
+                  <Row gutter={[16, 8]}>
+                    <Col span={12}>
+                      <Space>
+                        <CheckCircleOutlined style={{ color: "#52c41a" }} />
+                        <Text style={{ fontSize: 14 }}>
+                          Còn lại: {product?.stockQuantity || 11}
+                        </Text>
+                      </Space>
+                    </Col>
+                    <Col span={12}>
+                      <Space>
+                        <TruckOutlined style={{ color: "#1890ff" }} />
+                        <Text style={{ fontSize: 14 }}>
+                          Giao trong 2-3 ngày
+                        </Text>
+                      </Space>
+                    </Col>
+                    <Col span={12}>
+                      <Space>
+                        <SyncOutlined style={{ color: "#722ed1" }} />
+                        <Text style={{ fontSize: 14 }}>Đổi trả 7 ngày</Text>
+                      </Space>
+                    </Col>
+                    <Col span={12}>
+                      <Space>
+                        <CreditCardOutlined style={{ color: "#fa8c16" }} />
+                        <Text style={{ fontSize: 14 }}>Thanh toán COD</Text>
+                      </Space>
+                    </Col>
+                  </Row>
                 </div>
 
-                {/* Thêm các đặc điểm nổi bật */}
-                <div style={{ marginBottom: 20 }}>
-                  <Text
-                    strong
-                    style={{ fontSize: 16, display: "block", marginBottom: 12 }}
-                  >
-                    Đặc điểm nổi bật:
-                  </Text>
-                  <div style={{ fontSize: 14 }}>
-                    <div
-                      style={{
-                        marginBottom: 6,
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span style={{ color: "#52c41a", marginRight: 8 }}>
-                        ✓
-                      </span>
-                      <Text>Thiết kế tinh xảo, độc đáo</Text>
-                    </div>
-                    <div
-                      style={{
-                        marginBottom: 6,
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span style={{ color: "#52c41a", marginRight: 8 }}>
-                        ✓
-                      </span>
-                      <Text>Chất liệu bền đẹp, không phai màu</Text>
-                    </div>
-                    <div
-                      style={{
-                        marginBottom: 6,
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span style={{ color: "#52c41a", marginRight: 8 }}>
-                        ✓
-                      </span>
-                      <Text>Phù hợp làm quà tặng hoặc trang trí</Text>
-                    </div>
-                    <div
-                      style={{
-                        marginBottom: 6,
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span style={{ color: "#52c41a", marginRight: 8 }}>
-                        ✓
-                      </span>
-                      <Text>Miễn phí vận chuyển toàn quốc</Text>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Thêm thông tin vận chuyển */}
-                <div
-                  style={{
-                    border: "1px solid #e8e8e8",
-                    padding: "12px",
-                    borderRadius: "6px",
-                    marginBottom: "20px",
-                    backgroundColor: "#fafafa",
-                  }}
-                >
-                  <div style={{ fontSize: 14, marginBottom: 8 }}>
-                    <Text type="secondary">🚚 Vận chuyển: </Text>
-                    <Text>Giao hàng trong 2-3 ngày</Text>
-                  </div>
-                  <div style={{ fontSize: 14, marginBottom: 8 }}>
-                    <Text type="secondary">🔄 Đổi trả: </Text>
-                    <Text>Miễn phí đổi trả trong 7 ngày</Text>
-                  </div>
-                  <div style={{ fontSize: 14 }}>
-                    <Text type="secondary">💳 Thanh toán: </Text>
-                    <Text>COD, Chuyển khoản</Text>
-                  </div>
-                </div>
-
+                {/* Quantity Selector */}
                 <div style={{ marginBottom: 24 }}>
                   <Text
                     strong
-                    style={{ fontSize: 14, marginBottom: 8, display: "block" }}
+                    style={{ fontSize: 16, marginBottom: 12, display: "block" }}
                   >
                     Số lượng
                   </Text>
-                  <InputNumber
-                    min={1}
-                    max={product?.stockQuantity || 999}
-                    value={quantity}
-                    onChange={handleQuantityChange}
-                    style={{
-                      width: 120,
-                      height: 40,
-                    }}
-                  />
+                  <Space>
+                    <InputNumber
+                      min={1}
+                      max={product?.stockQuantity || 999}
+                      value={quantity}
+                      onChange={handleQuantityChange}
+                      size="large"
+                      style={{ width: 120 }}
+                    />
+                    <Text type="secondary">
+                      {product?.stockQuantity || 11} sản phẩm có sẵn
+                    </Text>
+                  </Space>
                 </div>
               </div>
 
+              {/* Action Button - Always at bottom */}
               <Button
                 type="primary"
-                danger
-                block
                 size="large"
+                block
+                icon={<ShoppingCartOutlined />}
+                onClick={handleOrder}
                 style={{
-                  height: 56,
-                  fontSize: 18,
-                  borderRadius: 6,
-                  backgroundColor: "#ff4757",
+                  height: 50,
+                  fontSize: 16,
+                  fontWeight: 600,
+                  borderRadius: 8,
+                  background:
+                    "linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)",
                   border: "none",
-                  marginTop: 20,
-                }}
-                onClick={() => {
-                  handleOrder();
+                  boxShadow: "0 4px 15px rgba(238, 90, 36, 0.4)",
+                  marginTop: "auto",
                 }}
               >
-                Thêm Vào Giỏ Hàng
+                Thêm vào giỏ hàng
               </Button>
             </div>
           </Card>
         </Col>
       </Row>
+
+      {/* Product Details Tabs */}
+      <Card
+        style={{
+          marginTop: 32,
+          borderRadius: 16,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+          border: "none",
+        }}
+      >
+        <Tabs defaultActiveKey="1" size="large">
+          <TabPane tab="Mô tả sản phẩm" key="1">
+            <div style={{ padding: "20px 0" }}>
+              <Title level={4} style={{ marginBottom: 16 }}>
+                Mô tả chi tiết
+              </Title>
+              <Paragraph
+                style={{ fontSize: 16, lineHeight: 1.8, color: "#555" }}
+              >
+                {product?.description ||
+                  "Sản phẩm handmade cao cấp được chế tác tỉ mỉ từ những nghệ nhân lành nghề. Với thiết kế độc đáo và chất liệu bền đẹp, sản phẩm không chỉ mang tính thẩm mỹ cao mà còn có giá trị sử dụng lâu dài."}
+              </Paragraph>
+
+              <Title level={5} style={{ marginTop: 24, marginBottom: 16 }}>
+                Thông số kỹ thuật
+              </Title>
+              <Row gutter={[16, 16]}>
+                <Col span={12}>
+                  <div
+                    style={{
+                      padding: 16,
+                      backgroundColor: "#fafafa",
+                      borderRadius: 8,
+                    }}
+                  >
+                    <Text strong>Chất liệu:</Text>
+                    <br />
+                    <Text>Gốm sứ cao cấp</Text>
+                  </div>
+                </Col>
+                <Col span={12}>
+                  <div
+                    style={{
+                      padding: 16,
+                      backgroundColor: "#fafafa",
+                      borderRadius: 8,
+                    }}
+                  >
+                    <Text strong>Kích thước:</Text>
+                    <br />
+                    <Text>25cm x 18cm x 12cm</Text>
+                  </div>
+                </Col>
+                <Col span={12}>
+                  <div
+                    style={{
+                      padding: 16,
+                      backgroundColor: "#fafafa",
+                      borderRadius: 8,
+                    }}
+                  >
+                    <Text strong>Xuất xứ:</Text>
+                    <br />
+                    <Text>Việt Nam</Text>
+                  </div>
+                </Col>
+                <Col span={12}>
+                  <div
+                    style={{
+                      padding: 16,
+                      backgroundColor: "#fafafa",
+                      borderRadius: 8,
+                    }}
+                  >
+                    <Text strong>Bảo hành:</Text>
+                    <br />
+                    <Text>12 tháng</Text>
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          </TabPane>
+
+          <TabPane tab="Chính sách" key="2">
+            <div style={{ padding: "20px 0" }}>
+              <Row gutter={[24, 24]}>
+                <Col span={12}>
+                  <Card size="small" style={{ height: "100%" }}>
+                    <Title level={5}>
+                      <TruckOutlined
+                        style={{ color: "#1890ff", marginRight: 8 }}
+                      />
+                      Chính sách vận chuyển
+                    </Title>
+                    <ul style={{ paddingLeft: 20, lineHeight: 2 }}>
+                      <li>Miễn phí vận chuyển toàn quốc</li>
+                      <li>Giao hàng trong 2-3 ngày làm việc</li>
+                      <li>Đóng gói cẩn thận, chống va đập</li>
+                    </ul>
+                  </Card>
+                </Col>
+                <Col span={12}>
+                  <Card size="small" style={{ height: "100%" }}>
+                    <Title level={5}>
+                      <SyncOutlined
+                        style={{ color: "#52c41a", marginRight: 8 }}
+                      />
+                      Chính sách đổi trả
+                    </Title>
+                    <ul style={{ paddingLeft: 20, lineHeight: 2 }}>
+                      <li>Đổi trả miễn phí trong 7 ngày</li>
+                      <li>Sản phẩm còn nguyên tem, nhãn</li>
+                      <li>Hoàn tiền 100% nếu lỗi từ nhà sản xuất</li>
+                    </ul>
+                  </Card>
+                </Col>
+              </Row>
+            </div>
+          </TabPane>
+        </Tabs>
+      </Card>
     </div>
   );
-}
+};
 
 export default ProductDetail;

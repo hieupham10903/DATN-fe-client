@@ -82,7 +82,7 @@ const ProductHook = () => {
   };
 
   const DetailProduct = (id: string) => {
-    dispatch(detailProduct(id));
+    return dispatch(detailProduct(id));
   };
 
   const OrderProduct = (body: any) => {

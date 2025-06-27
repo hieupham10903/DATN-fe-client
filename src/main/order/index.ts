@@ -4,6 +4,7 @@ import {
   deleteOrder,
   getImage,
   getListOrder,
+  getOrderHistory,
   updateQuantity,
 } from "./reducers.ts";
 
@@ -14,11 +15,15 @@ const OrderHook = () => {
 
   const mainImage = useSelector((state: RootState) => state.order.mainImage);
 
-  const userInfo = useSelector((state: RootState) => state.user.userInfo);
-
   const updateSuccess = useSelector(
     (state: RootState) => state.order.updateSuccess
   );
+
+  const listOrderHistory = useSelector(
+    (state: RootState) => state.order.listOrderHistory
+  );
+
+  const userInfo = useSelector((state: RootState) => state.user.userInfo);
 
   const GetListOrder = (userId: string) => {
     dispatch(getListOrder(userId));
@@ -36,6 +41,10 @@ const OrderHook = () => {
     return dispatch(deleteOrder(id));
   };
 
+  const GetOrderHistory = (orderId: string) => {
+    return dispatch(getOrderHistory(orderId));
+  };
+
   return {
     GetListOrder,
     listOrder,
@@ -45,6 +54,8 @@ const OrderHook = () => {
     UpdateQuantity,
     updateSuccess,
     DeleteOrder,
+    GetOrderHistory,
+    listOrderHistory,
   };
 };
 export default OrderHook;

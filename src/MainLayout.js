@@ -31,6 +31,7 @@ const MainLayout = ({ children }) => {
     const [collapsed, setCollapsed] = useState(false);
     const location = useLocation();
     const [visibleUpdate, setVisibleUpdate] = useState(false);
+    const [searchValue, setSearchValue] = useState("");
 
     const { Logout, ChatBotReply } = UserHook();
 
@@ -128,6 +129,10 @@ const MainLayout = ({ children }) => {
         setVisibleUpdate(false);
     };
 
+    const handleEnter = () => {
+        navigate("/product-list", { state: { name: searchValue.trim() } });
+    };
+
     return (
         <>
             <Modal
@@ -155,11 +160,18 @@ const MainLayout = ({ children }) => {
                     </div>
 
                     <div style={{ flex: 1, padding: "0 20px" }}>
-                        <Input
-                            prefix={<SearchOutlined />}
-                            placeholder="Tìm kiếm..."
-                            style={{ width: "100%", borderRadius: 8 }}
-                        />
+                        <div style={{ flex: 1, padding: "0 20px" }}>
+                            <Input
+                                prefix={<SearchOutlined />}
+                                placeholder="Tìm kiếm..."
+                                value={searchValue}
+                                onChange={(e) => setSearchValue(e.target.value)}
+                                onPressEnter={handleEnter}
+                                onClear={handleEnter}
+                                allowClear
+                                style={{ width: "100%", borderRadius: 8 }}
+                            />
+                        </div>
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center", gap: 16 }}>

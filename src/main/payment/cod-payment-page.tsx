@@ -2,11 +2,11 @@
 
 import {
   CheckCircleOutlined,
-  ClockCircleOutlined,
   DollarOutlined,
+  DownloadOutlined,
   EnvironmentOutlined,
   PhoneOutlined,
-  TruckOutlined,
+  PrinterOutlined,
 } from "@ant-design/icons";
 import {
   Alert,
@@ -23,6 +23,8 @@ import {
   Typography,
 } from "antd";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { generateInvoicePDF } from "./generateInvoicePDF.ts";
 import PaymentHook from "./index.ts";
 
 const { Title, Text } = Typography;
@@ -35,7 +37,10 @@ const CodPaymentPage = () => {
     GetDetailOrder,
     order,
     PaymentSuccess,
+    GetListOrderItemsLastest,
   } = PaymentHook();
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [orderConfirmed, setOrderConfirmed] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -70,7 +75,9 @@ const CodPaymentPage = () => {
         orderId: userInfo.orderId,
         address: form.getFieldValue("address"),
       });
+      await PaymentSuccess(userInfo.orderId);
       setOrderConfirmed(true);
+      setCurrentStep(1);
     } finally {
       setLoading(false);
     }
@@ -90,16 +97,45 @@ const CodPaymentPage = () => {
       icon: <EnvironmentOutlined />,
     },
     {
-      title: "Xác nhận đơn hàng",
-      description: "Đang xử lý đơn hàng",
-      icon: <ClockCircleOutlined />,
-    },
-    {
       title: "Hoàn tất",
       description: "Đơn hàng đã được xác nhận",
       icon: <CheckCircleOutlined />,
     },
   ];
+
+  const handlePrint = () => {
+    GetListOrderItemsLastest(userInfo.orderId).then((value) => {
+      const payload = value.payload as any;
+      const orderItems = payload.data;
+
+      const info = {
+        userName: userInfo?.name,
+        paymentDate: order?.paymentDate,
+        orderId: userInfo?.orderId,
+        paymentId: order?.paymentId,
+        paymentMethod: "Trực tuyến",
+      };
+
+      generateInvoicePDF(orderItems, info, true);
+    });
+  };
+
+  const handleDownload = () => {
+    GetListOrderItemsLastest(userInfo.orderId).then((value) => {
+      const payload = value.payload as any;
+      const orderItems = payload.data;
+
+      const info = {
+        userName: userInfo?.name,
+        paymentDate: order?.paymentDate,
+        orderId: userInfo?.orderId,
+        paymentId: order?.paymentId,
+        paymentMethod: "Trực tuyến",
+      };
+
+      generateInvoicePDF(orderItems, info, false);
+    });
+  };
 
   return (
     <div style={{ minHeight: "100vh", background: "#f0f2f5", padding: "24px" }}>
@@ -400,38 +436,25 @@ const CodPaymentPage = () => {
                 </Space>
               </Card>
 
-              <Alert
-                message="Thông tin quan trọng"
-                description={
-                  <div style={{ textAlign: "left" }}>
-                    <p>
-                      <TruckOutlined /> Shipper sẽ liên hệ bạn trong vòng 24h
-                    </p>
-                    <p>
-                      <ClockCircleOutlined /> Thời gian giao hàng: 1-3 ngày làm
-                      việc
-                    </p>
-                    <p>
-                      <DollarOutlined /> Chuẩn bị tiền mặt:{" "}
-                      {formatCurrency(order?.totalAmount)}
-                    </p>
-                  </div>
-                }
-                type="success"
-                showIcon
-              />
-
               <Space size="large">
                 <Button
                   size="large"
-                  onClick={() => (window.location.href = "/orders")}
+                  icon={<PrinterOutlined />}
+                  onClick={handlePrint}
                 >
-                  Xem đơn hàng
+                  In hóa đơn
+                </Button>
+                <Button
+                  size="large"
+                  icon={<DownloadOutlined />}
+                  onClick={handleDownload}
+                >
+                  Tải xuống hóa đơn
                 </Button>
                 <Button
                   type="primary"
                   size="large"
-                  onClick={() => (window.location.href = "/")}
+                  onClick={() => navigate("/product-list")}
                 >
                   Tiếp tục mua sắm
                 </Button>

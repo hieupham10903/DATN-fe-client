@@ -20,7 +20,7 @@ import {
 import Card from "antd/es/card/Card";
 import Meta from "antd/es/card/Meta";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ProductHook from "./index.ts";
 import "./product.css";
 
@@ -39,6 +39,9 @@ const ProductList = () => {
 
   const navigate = useNavigate();
 
+  const location = useLocation();
+  const name = location.state?.name || "";
+
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 6,
@@ -46,10 +49,17 @@ const ProductList = () => {
     dataSearch: {},
   });
 
-  const [searchText, setSearchText] = useState("");
-  const [searchField, setSearchField] = useState("name");
-  const [isReset, setReset] = useState(false);
-  const [record, setRecord] = useState(undefined);
+  useEffect(() => {
+    const newDataSearch = name?.trim()
+      ? { name: { contains: name.trim() } }
+      : {};
+
+    setPagination((prev) => ({
+      ...prev,
+      dataSearch: newDataSearch,
+    }));
+  }, [name]);
+
   const [visibleDetail, setVisibleDetail] = useState(false);
   const [mainImageList, setMainImageList] = useState({});
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -108,6 +118,7 @@ const ProductList = () => {
       current: 1,
       pageSize: 6,
       dataSearch: {
+        ...pagination.dataSearch,
         categoryId: {
           equals: selectedCategory,
         },
@@ -123,7 +134,13 @@ const ProductList = () => {
     <div className="product-list-container">
       {/* Header Section */}
       <div className="product-header">
-        <h1 className="product-title">Danh sách sản phẩm</h1>
+        {name === "" ? (
+          <h1 className="product-title">Danh sách sản phẩm</h1>
+        ) : (
+          <h1 className="product-title">
+            Danh sách sản phẩm có tên là "{name}"
+          </h1>
+        )}
         <p className="product-subtitle">
           Khám phá những sản phẩm chất lượng cao
         </p>

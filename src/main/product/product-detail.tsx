@@ -236,9 +236,7 @@ function ProductDetail({ handleCloseModal }) {
                 <div style={{ marginBottom: 16, fontSize: 16 }}>
                   <Text type="secondary">Đánh giá: </Text>
                   <span style={{ color: "#faad14" }}>★★★★☆</span>
-                  <Text style={{ marginLeft: 8, color: "#666" }}>
-                    (4.2/5 - 128 đánh giá)
-                  </Text>
+                  <Text style={{ marginLeft: 8, color: "#666" }}>(4/5)</Text>
                 </div>
 
                 {/* Thêm thông tin chi tiết sản phẩm */}
@@ -356,7 +354,7 @@ function ProductDetail({ handleCloseModal }) {
                   </div>
                   <div style={{ fontSize: 14 }}>
                     <Text type="secondary">💳 Thanh toán: </Text>
-                    <Text>COD, Chuyển khoản, Thẻ tín dụng</Text>
+                    <Text>COD, Chuyển khoản</Text>
                   </div>
                 </div>
 

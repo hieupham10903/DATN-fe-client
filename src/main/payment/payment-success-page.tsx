@@ -259,7 +259,7 @@ const PaymentSuccessPage = ({ transactionInfo }: PaymentSuccessPageProps) => {
                 icon={<DownloadOutlined />}
                 onClick={handleDownload}
               >
-                Tải xuống
+                Tải xuống hóa đơn
               </Button>
             </Space>
           </div>

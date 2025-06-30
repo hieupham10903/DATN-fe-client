@@ -511,7 +511,8 @@ const MainLayout = ({ children }) => {
                                   dangerouslySetInnerHTML={{
                                     __html: message.content.replace(
                                       /(https:\/\/datn-fe-client.vercel.app\/product\/[a-zA-Z0-9\-]+)/g,
-                                      (match) => `<a href="${match}" target="_blank" style="color: #1890ff;">${match}</a>`
+                                      (match) =>
+                                        `<a href="${match}" target="_blank" style="color: #1890ff; text-decoration: underline;">Xem chi tiết sản phẩm</a>`
                                     ),
                                   }}
                                 />

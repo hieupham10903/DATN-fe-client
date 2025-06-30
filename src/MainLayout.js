@@ -504,7 +504,18 @@ const MainLayout = ({ children }) => {
                             }}
                           >
                             <div style={{ fontSize: 14, lineHeight: 1.5 }}>
-                              {message.isTyping ? <TypingIndicator /> : message.content}
+                              {message.isTyping ? (
+                                <TypingIndicator />
+                              ) : (
+                                <span
+                                  dangerouslySetInnerHTML={{
+                                    __html: message.content.replace(
+                                      /(https:\/\/datn-fe-client.vercel.app\/product\/[a-zA-Z0-9\-]+)/g,
+                                      (match) => `<a href="${match}" target="_blank" style="color: #1890ff;">${match}</a>`
+                                    ),
+                                  }}
+                                />
+                              )}
                             </div>
                             <div
                               style={{

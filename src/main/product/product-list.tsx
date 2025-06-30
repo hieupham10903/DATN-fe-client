@@ -86,6 +86,7 @@ const ProductList = () => {
   }, [updateSuccess]);
 
   const handleOpenDetail = (item) => {
+    ResetProductState();
     navigate(`/product/${item.id}`);
   };
 

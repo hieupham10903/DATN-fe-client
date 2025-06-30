@@ -71,9 +71,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ handleCloseModal }) => {
 
   useEffect(() => {
     if (product?.imageUrl && !mainImage) {
+      console.log("product?.imageUrl", product?.imageUrl);
       GetMainImage(product?.imageUrl);
     }
-  }, [product?.imageUrl]);
+  }, [product]);
 
   useEffect(() => {
     if (imageDetails.length > 0 && detailImages.length === 0) {

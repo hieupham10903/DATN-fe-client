@@ -59,7 +59,6 @@ const ProductList = () => {
     }));
   }, [name]);
 
-  const [visibleDetail, setVisibleDetail] = useState(false);
   const [mainImageList, setMainImageList] = useState({});
   const [favorites, setFavorites] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState(null);

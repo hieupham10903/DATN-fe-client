@@ -80,25 +80,45 @@ const OrderHistory: React.FC = () => {
 
   // Function to get order status based on payment status
   const getOrderStatus = (paymentStatus: string) => {
-    switch (paymentStatus.toLowerCase()) {
-      case "paid":
-        return { status: "completed", text: "Đã thanh toán", color: "success" };
-      case "pending":
-        return { status: "pending", text: "Chờ thanh toán", color: "warning" };
-      case "failed":
-        return {
-          status: "failed",
-          text: "Thanh toán thất bại",
-          color: "error",
-        };
-      case "processing":
-        return {
-          status: "processing",
-          text: "Đang xử lý",
-          color: "processing",
-        };
-      default:
-        return { status: "unknown", text: "Không xác định", color: "default" };
+    if (paymentStatus == null) {
+      return {
+        status: "processing",
+        text: "Đang xử lý",
+        color: "processing",
+      };
+    } else {
+      switch (paymentStatus.toLowerCase()) {
+        case "paid":
+          return {
+            status: "completed",
+            text: "Đã thanh toán",
+            color: "success",
+          };
+        case "pending":
+          return {
+            status: "pending",
+            text: "Chờ thanh toán",
+            color: "warning",
+          };
+        case "failed":
+          return {
+            status: "failed",
+            text: "Thanh toán thất bại",
+            color: "error",
+          };
+        case "processing":
+          return {
+            status: "processing",
+            text: "Đang xử lý",
+            color: "processing",
+          };
+        default:
+          return {
+            status: "unknown",
+            text: "Không xác định",
+            color: "default",
+          };
+      }
     }
   };
 

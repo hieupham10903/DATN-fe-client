@@ -131,7 +131,7 @@ const OrderList = () => {
               {record.name}
             </Title>
             <Text type="secondary" style={{ fontSize: 12 }}>
-              Mã SP: #{record.id.slice(0, 8).toUpperCase()}
+              Mã SP: #{record.id.toUpperCase()}
             </Text>
           </div>
         </div>

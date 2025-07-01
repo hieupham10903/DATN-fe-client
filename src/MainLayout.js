@@ -168,41 +168,49 @@ const MainLayout = ({ children }) => {
   }
 
   const generateBreadcrumb = () => {
-    const pathSnippets = location.pathname.split("/").filter((i) => i)
+    const pathSnippets = location.pathname.split("/").filter((i) => i);
     const breadcrumbItems = [
       <Breadcrumb.Item key="home">
         <Link to="/">Trang chủ</Link>
       </Breadcrumb.Item>,
-    ]
+    ];
 
     if (pathSnippets.length === 2 && pathSnippets[0] === "product") {
       breadcrumbItems.push(
         <Breadcrumb.Item key="product-list">
           <Link to="/product-list">Danh sách sản phẩm</Link>
-        </Breadcrumb.Item>,
-      )
-      breadcrumbItems.push(<Breadcrumb.Item key="product-detail">Chi tiết sản phẩm</Breadcrumb.Item>)
-      return breadcrumbItems
+        </Breadcrumb.Item>
+      );
+      breadcrumbItems.push(
+        <Breadcrumb.Item key="product-detail">Chi tiết sản phẩm</Breadcrumb.Item>
+      );
+      return breadcrumbItems;
     }
 
     const pathNameMap = {
       about: "Giới thiệu",
       "product-list": "Danh sách sản phẩm",
       profile: "Sửa thông tin",
-    }
+      "order-list": "Giỏ hàng",
+      payment: "Thanh toán trực tuyến",
+      "payment-offline": "Thanh toán trực tiếp",
+      "order-history": "Lịch sử mua hàng",
+      "payment-success": "Thanh toán thành công",
+
+    };
 
     pathSnippets.forEach((snippet, index) => {
-      const url = `/${pathSnippets.slice(0, index + 1).join("/")}`
-      const name = pathNameMap[snippet] || decodeURIComponent(snippet)
+      const url = `/${pathSnippets.slice(0, index + 1).join("/")}`;
+      const name = pathNameMap[snippet] || decodeURIComponent(snippet);
       breadcrumbItems.push(
         <Breadcrumb.Item key={url}>
           <Link to={url}>{name}</Link>
-        </Breadcrumb.Item>,
-      )
-    })
+        </Breadcrumb.Item>
+      );
+    });
 
-    return breadcrumbItems
-  }
+    return breadcrumbItems;
+  };
 
   const handleOpenUpdate = () => setVisibleUpdate(true)
   const handleCloseUpdate = () => setVisibleUpdate(false)

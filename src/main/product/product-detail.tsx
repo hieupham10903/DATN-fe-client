@@ -11,7 +11,6 @@ import {
 } from "@ant-design/icons";
 
 import {
-  Badge,
   Button,
   Card,
   Col,
@@ -88,14 +87,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ handleCloseModal }) => {
     }
   }, [imageDetails]);
 
-  const originalPrice: number = product?.price
-    ? Number.parseInt(product?.price) + 500000
-    : 970000;
-
   const discountPrice: number = product?.price || 111111;
-  const discountPercent: number = Math.round(
-    ((originalPrice - discountPrice) / originalPrice) * 100
-  );
 
   const handleQuantityChange = (value: number | null): void => {
     setQuantity(value || 1);
@@ -162,13 +154,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ handleCloseModal }) => {
             <div
               style={{ position: "relative", backgroundColor: "#fff", flex: 1 }}
             >
-              {discountPercent > 0 && (
-                <Badge.Ribbon
-                  text={`-${discountPercent}%`}
-                  color="red"
-                  style={{ fontSize: 14, fontWeight: "bold" }}
-                />
-              )}
               <div
                 style={{
                   position: "relative",
@@ -324,17 +309,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ handleCloseModal }) => {
                     >
                       {discountPrice.toLocaleString()}₫
                     </Text>
-                    {discountPercent > 0 && (
-                      <Text
-                        delete
-                        style={{
-                          fontSize: 18,
-                          color: "#999",
-                        }}
-                      >
-                        {originalPrice.toLocaleString()}₫
-                      </Text>
-                    )}
                   </Space>
                 </div>
 

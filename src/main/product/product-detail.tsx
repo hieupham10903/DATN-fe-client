@@ -48,6 +48,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ handleCloseModal }) => {
     OrderProduct,
     updateSuccess,
     userInfo,
+    GetAllCategory,
+    listAllCategory,
   } = ProductHook();
 
   const { id } = useParams<{ id: string }>();
@@ -55,6 +57,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ handleCloseModal }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    GetAllCategory();
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -459,7 +465,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ handleCloseModal }) => {
                 Thông số kỹ thuật
               </Title>
               <Row gutter={[16, 16]}>
-                <Col span={12}>
+                <Col span={24}>
                   <div
                     style={{
                       padding: 16,
@@ -469,20 +475,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ handleCloseModal }) => {
                   >
                     <Text strong>Chất liệu:</Text>
                     <br />
-                    <Text>Gốm sứ cao cấp</Text>
-                  </div>
-                </Col>
-                <Col span={12}>
-                  <div
-                    style={{
-                      padding: 16,
-                      backgroundColor: "#fafafa",
-                      borderRadius: 8,
-                    }}
-                  >
-                    <Text strong>Kích thước:</Text>
-                    <br />
-                    <Text>25cm x 18cm x 12cm</Text>
+                    <Text>
+                      {listAllCategory.find(
+                        (cat) => cat.id === product.categoryId
+                      )?.name || "Không rõ"}
+                    </Text>{" "}
                   </div>
                 </Col>
                 <Col span={12}>

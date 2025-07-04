@@ -35,7 +35,6 @@ import EmployeeUpdate from "./main/login/update-user-info.tsx"
 import avatar from "./picture/avatar.png"
 import logo from "./picture/logo.png"
 
-
 const { Header, Content, Sider, Footer } = Layout
 const { TextArea } = Input
 const { Text } = Typography
@@ -54,13 +53,29 @@ const MainLayout = ({ children }) => {
   const [chatMinimized, setChatMinimized] = useState(false)
   const [chatInput, setChatInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
-  const [chatMessages, setChatMessages] = useState([
-    {
-      role: "assistant",
-      content: "Xin chào! Tôi là trợ lý ảo của bạn. Bạn cần trợ giúp gì hôm nay? 😊",
-      timestamp: new Date(),
-    },
-  ])
+  const [chatMessages, setChatMessages] = useState(() => {
+  const saved = localStorage.getItem("chatHistory");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          return parsed.map(msg => ({
+            ...msg,
+            timestamp: new Date(msg.timestamp),
+          }));
+        }
+      } catch (e) {
+        console.error("Lỗi khi parse chat history:", e);
+      }
+    }
+    return [
+      {
+        role: "assistant",
+        content: "Xin chào! Tôi là trợ lý ảo của bạn. Bạn cần trợ giúp gì hôm nay? 😊",
+        timestamp: new Date(),
+      },
+    ];
+  });
 
   const messagesEndRef = useRef(null)
   const chatInputRef = useRef(null)
@@ -70,6 +85,7 @@ const MainLayout = ({ children }) => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
     }
+    localStorage.setItem("chatHistory", JSON.stringify(chatMessages));
   }, [chatMessages])
 
   // Focus input when chat opens
@@ -80,7 +96,10 @@ const MainLayout = ({ children }) => {
   }, [chatVisible, chatMinimized])
 
   const handleLogoClick = () => navigate("/")
-  const handleLogout = () => Logout()
+  const handleLogout = () => {
+    localStorage.removeItem("chatHistory");
+    Logout()
+  }
 
   const menu = (
     <Menu>

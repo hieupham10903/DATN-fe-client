@@ -30,6 +30,7 @@ import {
 
 import { useEffect, useRef, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
+import ChangePassword from "./main/login/change-password.tsx"
 import UserHook from "./main/login/index.ts"
 import EmployeeUpdate from "./main/login/update-user-info.tsx"
 import avatar from "./picture/avatar.png"
@@ -45,6 +46,7 @@ const MainLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false)
   const location = useLocation()
   const [visibleUpdate, setVisibleUpdate] = useState(false)
+  const [visibleChangePassword, setVisibleChangePassword] = useState(false)
   const [searchValue, setSearchValue] = useState("")
   const { Logout, ChatBotReply } = UserHook()
 
@@ -105,6 +107,9 @@ const MainLayout = ({ children }) => {
     <Menu>
       <Menu.Item key="profile" icon={<UserOutlined />}>
         <span onClick={() => handleOpenUpdate()}>Sửa thông tin</span>
+      </Menu.Item>
+      <Menu.Item key="change-password" icon={<UserOutlined />}>
+        <span onClick={() => handleOpenChangePassword()}>Đổi mật khẩu</span>
       </Menu.Item>
       <Menu.Item key="order-history" icon={<HistoryOutlined />}>
         <span onClick={() => handleOpenOrderHistory()}>Lịch sử mua hàng</span>
@@ -234,6 +239,9 @@ const MainLayout = ({ children }) => {
   const handleOpenUpdate = () => setVisibleUpdate(true)
   const handleCloseUpdate = () => setVisibleUpdate(false)
 
+  const handleOpenChangePassword = () => setVisibleChangePassword(true)
+  const handleCloseChangePassword = () => setVisibleChangePassword(false)
+
   const handleOpenOrderHistory = () => {
     navigate("/order-history")
   }
@@ -309,6 +317,10 @@ const MainLayout = ({ children }) => {
       {/* Update Modal */}
       <Modal title="Chỉnh sửa thông tin" onCancel={handleCloseUpdate} width={1500} open={visibleUpdate} footer={null}>
         <EmployeeUpdate handleCloseModal={handleCloseUpdate} />
+      </Modal>
+
+      <Modal title="Đổi mật khẩu" onCancel={handleCloseChangePassword} width={1500} open={visibleChangePassword} footer={null}>
+        <ChangePassword handleCloseModal={handleCloseChangePassword} />
       </Modal>
 
       <Layout style={{ minHeight: "100vh" }}>

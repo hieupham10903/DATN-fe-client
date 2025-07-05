@@ -8,9 +8,11 @@ const initialState = {
     ? JSON.parse(localStorage.getItem("userInfo")!)
     : undefined,
   updateSuccess: false,
+  changePasswordSuccess: false,
 };
 
 const apiUpdateEmployee = "/api/update-employee";
+const apiChangePassword = "/api/auth/change-password";
 
 export const login = createAsyncThunk("user/login", async (body: any) => {
   localStorage.setItem("isAuthenticated", "true");
@@ -41,6 +43,14 @@ export const updateEmployee = createAsyncThunk(
   "user/updateEmployee",
   async (body: any) => {
     const response = await axiosClient.post<any>(apiUpdateEmployee, body);
+    return response;
+  }
+);
+
+export const changePassword = createAsyncThunk(
+  "user/changePassword",
+  async (body: any) => {
+    const response = await axiosClient.post<any>(apiChangePassword, body);
     return response;
   }
 );
@@ -99,6 +109,15 @@ const userReducer = createSlice({
       })
       .addCase(updateEmployee.rejected, (state, action) => {
         state.updateSuccess = false;
+      })
+      .addCase(changePassword.fulfilled, (state, action) => {
+        state.changePasswordSuccess = true;
+      })
+      .addCase(changePassword.pending, (state, action) => {
+        state.changePasswordSuccess = false;
+      })
+      .addCase(changePassword.rejected, (state, action) => {
+        state.changePasswordSuccess = false;
       });
   },
 });

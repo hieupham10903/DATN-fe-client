@@ -76,8 +76,6 @@ const OrderHistory: React.FC = () => {
     }
   }, [listOrderHistory]);
 
-  console.log("listOrderHistory", listOrderHistory);
-
   // Function to get order status based on payment status
   const getOrderStatus = (paymentStatus: string) => {
     if (paymentStatus == null) {

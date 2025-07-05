@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../main/reducers";
 import {
+  changePassword,
   chatBot,
   getUserInfo,
   login,
@@ -22,6 +23,10 @@ const UserHook = () => {
   const userInfo = useSelector((state: RootState) => state.user.userInfo);
   const updateSuccess = useSelector(
     (state: RootState) => state.user.updateSuccess
+  );
+
+  const changePasswordSuccess = useSelector(
+    (state: RootState) => state.user.changePasswordSuccess
   );
 
   const SetAuth = () => {
@@ -53,6 +58,10 @@ const UserHook = () => {
     dispatch(updateEmployee(body));
   };
 
+  const ChangePassword = (body: any) => {
+    dispatch(changePassword(body));
+  };
+
   return {
     isAuthenticated,
     SetAuth,
@@ -65,6 +74,8 @@ const UserHook = () => {
     userInfo,
     UpdateEmployee,
     updateSuccess,
+    ChangePassword,
+    changePasswordSuccess,
   };
 };
 export default UserHook;
